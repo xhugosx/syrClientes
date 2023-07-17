@@ -3,7 +3,6 @@ function primero() {
     if (localStorage.getItem('nombre') != null) {
 
         $('#cliente').text(localStorage.getItem('nombre'));
-        //alert(localStorage.getItem('nombre'));
         setBuscarProductos();
     }
     else window.location.href = "index.html";
@@ -16,8 +15,10 @@ function cerrarSesion() {
     }
 }
 
-function setBuscarSearchproductos(search) {
-
+function setBuscarProductosSearch(search) {
+    var id = localStorage.getItem("id");
+    id = llenarCeros(id);
+    servidor('https://empaquessyrgdl.000webhostapp.com/empaquesSyR/productos/select.php?type=4&search='+search+'&cliente='+id, getBuscarProductos)
 }
 
 function setBuscarProductos() {
@@ -27,6 +28,10 @@ function setBuscarProductos() {
 }
 function getBuscarProductos(xhttp) {
     var respuesta = xhttp.responseText;
+    if(respuesta == ""){
+        $('#tabla').html("Sin resultados...");
+        return 0;
+    } 
     var arrayJson = respuesta.split("|");
     var html = "";
     html += '<table class="table table-sm">';
@@ -42,7 +47,7 @@ function getBuscarProductos(xhttp) {
 
     for (var i = 0; i < arrayJson.length - 1; i++) {
         let tempJson = JSON.parse(arrayJson[i]);
-        console.log(tempJson);
+        //console.log(tempJson);
         let cliente = tempJson.codigo.substr(0, 3);
         let codigo = tempJson.codigo.replace("/", "-");
         let temp = tempJson.file
@@ -62,6 +67,7 @@ function getBuscarProductos(xhttp) {
     html += '        </tbody>';
     html += '    </table>';
 
+    
     $('#tabla').html(html);
     //alert(respuesta);
 

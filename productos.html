@@ -8,6 +8,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="shortcut icon" href="elements/pagina.svg">
     <link rel="stylesheet" href="css/main.css">
     <script src="js/productos.js"></script>
     <title>Productos</title>
@@ -51,8 +52,8 @@
     <br><br><br>
 
     <div class="esconder" style="display: flex; justify-content: center; margin: 0 7% 10px 7%;">
-        <input class="form-control mr-sm-2" type="search" placeholder="Buscar: Codigo / Productos " aria-label="Search">
-        <button class="btn btn-primary my-2 my-sm-0" type="submit">Buscar</button>
+        <input id="search"class="form-control mr-sm-2" type="search" placeholder="Buscar: Codigo / Productos " aria-label="Search" onchange="setBuscarProductosSearch(this.value)">
+        <button class="btn btn-primary my-2 my-sm-0" type="submit" onclick="setBuscarProductosSearch($('#search').val())">Buscar</button>
     </div>
 
     <!--CONTENIDO-->
@@ -61,6 +62,7 @@
         Buscando...
     </div>
 
+    <br><br><br>
     <div style="padding: 15px; position: fixed; bottom: 10px; right:10px;" class="esconder">
         <center>
             <button class="btn btn-primary my-2 my-sm-0" type="submit" onclick="imprimir()">Imprimir</button>
