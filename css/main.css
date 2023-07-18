@@ -69,3 +69,10 @@ tbody>tr:hover {
     visibility: hidden;
     position: absolute;
 }
+
+.active{
+    font-weight: bold !important;
+}
+h4{
+    font-weight: bold;
+}
