@@ -3,7 +3,7 @@ function primero() {
     if (localStorage.getItem('nombre') != null) {
 
         $('#cliente').text(localStorage.getItem('nombre'));
-        setBuscarPedidos()
+        setBuscarHistorial();
     }
     else window.location.href = "index.html";
 }
@@ -15,34 +15,23 @@ function cerrarSesion() {
     }
 }
 
-function setBuscarPedidosSearch(busqueda) {
+//funciones para consultar tabla
+function setBuscarHistorial() {
     var id = localStorage.getItem("id");
     id = llenarCeros(id);
-    //$('#tabla').empty(); 
-    //$('#tabla').append("Buscando...");
-    if(busqueda == "") setBuscarPedidos();
-    else
-    servidor('https://empaquessyrgdl.000webhostapp.com/empaquesSyR/lista_pedidos/selectAll.php?cliente=' + id+'&search='+busqueda+"&filtro=1&estado=0,1,2,3,5,6", getBuscarPedidos);
-}
 
-function setBuscarPedidos() {
-    var id = localStorage.getItem("id");
-    id = llenarCeros(id);
-    
-    //$('#tabla').empty(); 
-    //$('#tabla').append("Buscando...");
-
-    servidor('https://empaquessyrgdl.000webhostapp.com/empaquesSyR/lista_pedidos/selectAll.php?cliente=' + id+"&filtro=1&estado=0,1,2,3,5,6,", getBuscarPedidos);
+    servidor("https://empaquessyrgdl.000webhostapp.com/empaquesSyR/lista_pedidos/selectAllHistorialPedidos.php?filtro=1&estado=4,5,&cliente=" + id, getBuscarHistorial);
 }
-function getBuscarPedidos(xhttp) {
+function getBuscarHistorial(xhttp) {
 
     var respuesta = xhttp.responseText;
-    if(respuesta == ""){
+    if (respuesta == "") {
         $('#tabla').html("Sin resultados...");
         return 0;
-    } 
+    }
     var arrayJson = respuesta.split("|");
     var html = "";
+
     html += '<table class="table table-sm">';
     html += '            <thead>';
     html += '                <tr>';
@@ -53,42 +42,51 @@ function getBuscarPedidos(xhttp) {
     html += '                <th scope="col">Fecha Pedido</th>';
     html += '                <th scope="col">Entrega Estimada</th>';
     html += '                <th scope="col">Estatus</th>';
+    html += '                <th scope="col">Entregado</th>';
+    html += '                <th scope="col">Facturas</th>';
+    html += '                <th scope="col">Fechas</th>';
     html += '                </tr>';
     html += '            </thead>';
     html += '            <tbody>';
 
     for (var i = 0; i < arrayJson.length - 1; i++) {
+
         let tempJson = JSON.parse(arrayJson[i]);
         let estado, color;
-        if (tempJson.estado == 0) {
-            color = "#dfdfdfc7";
-            estado = "Pendiente";
-        } else if (tempJson.estado == 1) {
-            color = "#e9a371b0";
-            estado = "Proceso";
-        } else if(tempJson.estado == 2 || tempJson.estado == 3) {
-            color = "#77dd778f";
-            estado = "Terminado";
-        }else if (tempJson.estado == 5) {
+        if (tempJson.estado == 4) {
+            color = "#3f90eda5";
+            estado = "Entregado";
+        } else if (tempJson.estado == 5) {
             color = "rgba(161, 133, 148, 0.657)";
             estado = "Parcial";
-        }else if (tempJson.estado == 6) {
-            color = "rgba(83, 83, 83, 0.605)";
-            estado = "Cancelada";
         }
         var d = new Date(tempJson.fecha_oc);
         d = addDaysToDate(d, 20);
         //console.log();
         //console.log(tempJson);
+
+        var facturas = (tempJson.facturas).split(',');
+        var fechas = (tempJson.fechas).split(',');
+        var entregas = (tempJson.entregado).split(',');
+
         html += '<tr style="background:' + color + '">';
-        html += '    <td>' + tempJson.id + '</td>';
-        html += '    <td>' + tempJson.codigo + '</td>';
-        html += '    <td>' + tempJson.producto + '</td>';
-        html += '    <td>' + tempJson.cantidad + '</td>';
-        html += '    <td>' + tempJson.fecha_oc + '</td>';
-        html += '    <td>'+d+'</td>';
-        html += '    <td>' + estado + '</td>';
+        html += '    <td rowspan="'+facturas.length+'">' + tempJson.id + '</td>';
+        html += '    <td rowspan="'+facturas.length+'">' + tempJson.codigo + '</td>';
+        html += '    <td rowspan="'+facturas.length+'">' + tempJson.producto + '</td>';
+        html += '    <td rowspan="'+facturas.length+'">' + tempJson.cantidad + '</td>';
+        html += '    <td rowspan="'+facturas.length+'">' + tempJson.fecha_oc + '</td>';
+        html += '    <td rowspan="'+facturas.length+'">' + d + '</td>';
+        html += '    <td rowspan="'+facturas.length+'">' + estado + '</td>';
+        html += '    <td >' + entregas[0] + '</td>';
+        html += '    <td >' + facturas[0] + '</td>';
+        html += '    <td ">' + fechas[0] + '</td>';
         html += '</tr>';
+        html += '<tr tr style="background:' + color + '">';
+        for (let j = 1; j < entregas.length; j++) html += '    <td>' + entregas[j] + '</td>';
+        for (let j = 1; j < facturas.length; j++) html += '    <td>' + facturas[j] + '</td>';
+        for (let j = 1; j < fechas.length; j++) html += '    <td>' + fechas[j] + '</td>';
+        html += '</tr>'
+
 
 
     }
@@ -100,7 +98,6 @@ function getBuscarPedidos(xhttp) {
 
 
 }
-
 function servidor(link, miFuncion) {
     if (window.navigator.onLine) {
         var xhttp = new XMLHttpRequest();
@@ -136,14 +133,9 @@ function llenarCerosFecha(id) {
     else return id;
 
 }
-function addDaysToDate(date, days){
+function addDaysToDate(date, days) {
     date = new Date(date);
-    var fecha = new Date(date.getFullYear() + "-" + (date.getMonth()+2) + "-" + (date.getDate()+1) );
+    var fecha = new Date(date.getFullYear() + "-" + (date.getMonth() + 2) + "-" + (date.getDate() + 1));
     fecha.setDate(fecha.getDate() + days);
     return fecha.getFullYear() + "-" + llenarCerosFecha(fecha.getMonth()) + "-" + llenarCerosFecha(fecha.getDate());
 }
-/* function sumarDias(fecha, dias) {
-    fecha.setDate(fecha.getDate() + dias);
-    
-    return fecha.getFullYear() + "-" + llenarCerosFecha(fecha.getMonth()) + "-" + llenarCerosFecha(fecha.getDate());
-} */
