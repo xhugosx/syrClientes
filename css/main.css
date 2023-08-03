@@ -22,7 +22,7 @@ body {
 
 .inicio {
     position: fixed;
-    bottom: 650px;
+    bottom:75%;
     text-align: center;
     font-family: Verdana, sans-serif;
     font-weight: bold;
@@ -74,5 +74,8 @@ tbody>tr:hover {
     font-weight: bold !important;
 }
 h4{
+    font-weight: bold;
+}
+#cliente{
     font-weight: bold;
 }

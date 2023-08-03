@@ -14,7 +14,16 @@ function cerrarSesion() {
         window.location.href = "index.html";
     }
 }
-
+//funcion para hacer una busqueda
+function setBuscarPedidosSearch(busqueda) {
+    var id = localStorage.getItem("id");
+    id = llenarCeros(id);
+    //$('#tabla').empty(); 
+    //$('#tabla').append("Buscando...");
+    if (busqueda == "") setBuscarHistorial();
+    else
+    servidor("https://empaquessyrgdl.000webhostapp.com/empaquesSyR/lista_pedidos/selectAllHistorialPedidos.php?filtro=1&estado=4,5,&cliente=" + id + "&search=" + busqueda, getBuscarHistorial);
+}
 //funciones para consultar tabla
 function setBuscarHistorial() {
     var id = localStorage.getItem("id");
@@ -70,13 +79,13 @@ function getBuscarHistorial(xhttp) {
         var entregas = (tempJson.entregado).split(',');
 
         html += '<tr style="background:' + color + '">';
-        html += '    <td rowspan="'+facturas.length+'">' + tempJson.id + '</td>';
-        html += '    <td rowspan="'+facturas.length+'">' + tempJson.codigo + '</td>';
-        html += '    <td rowspan="'+facturas.length+'">' + tempJson.producto + '</td>';
-        html += '    <td rowspan="'+facturas.length+'">' + tempJson.cantidad + '</td>';
-        html += '    <td rowspan="'+facturas.length+'">' + tempJson.fecha_oc + '</td>';
-        html += '    <td rowspan="'+facturas.length+'">' + d + '</td>';
-        html += '    <td rowspan="'+facturas.length+'">' + estado + '</td>';
+        html += '    <td rowspan="' + facturas.length + '">' + tempJson.id + '</td>';
+        html += '    <td rowspan="' + facturas.length + '">' + tempJson.codigo + '</td>';
+        html += '    <td rowspan="' + facturas.length + '">' + tempJson.producto + '</td>';
+        html += '    <td rowspan="' + facturas.length + '">' + tempJson.cantidad + '</td>';
+        html += '    <td rowspan="' + facturas.length + '">' + tempJson.fecha_oc + '</td>';
+        html += '    <td rowspan="' + facturas.length + '">' + d + '</td>';
+        html += '    <td rowspan="' + facturas.length + '">' + estado + '</td>';
         html += '    <td >' + entregas[0] + '</td>';
         html += '    <td >' + facturas[0] + '</td>';
         html += '    <td ">' + fechas[0] + '</td>';
