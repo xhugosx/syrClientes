@@ -129,7 +129,7 @@ function getBuscarPedidos(xhttp) {
         html += '                <li class="list-group-item"><span class="bold">' + tempJson.codigo + '</span></li>';
         html += '                <li class="list-group-item">' + tempJson.producto + '</li>';
         html += '                <li class="list-group-item">  <span class="bold">' + tempJson.cantidad + ' pzas.</span>  </li>';
-        html += '                <li class="list-group-item">  <span class="bold">Estimado:</span>  ' + d + '</li>';
+        html += '                <li class="list-group-item" style="font-size: 10px">  <span class="bold">Entrega estimada: <br></span>  ' + d + '</li>';
         html += '            </ul>';
         html += '            <div class="card-footer">';
         html += '<span style="color: white; font-weight:bold">' + estado + '</span>';
@@ -188,12 +188,17 @@ function llenarCerosFecha(id) {
     else return id;
 
 }
-function addDaysToDate(date, days) {
-    date = new Date(date);
-    var fecha = new Date(date.getFullYear() + "-" + (date.getMonth() + 2) + "-" + (date.getDate() + 1));
-    fecha.setDate(fecha.getDate() + days);
-    return fecha.getFullYear() + "-" + llenarCerosFecha(fecha.getMonth()) + "-" + llenarCerosFecha(fecha.getDate());
-}
+function addDaysToDate(fecha, dias) {
+    fecha = new Date(fecha)
+    fecha.setDate(fecha.getDate() + dias + 1);
+    // Creamos array con los meses del año
+    const meses = ['ene', 'febr', 'mar', 'abr', 'may', 'jun', 'jul', 'agos', 'sep', 'oct', 'nov', 'dic'];
+    // Creamos array con los días de la semana
+    const dias_semana = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vier', 'Sáb'];
+    // Construimos el formato de salida
+    fecha = dias_semana[fecha.getDay()] + ', ' + fecha.getDate() + ' de ' + meses[fecha.getMonth()] + ' de ' + fecha.getUTCFullYear();
+    return fecha;
+  }
 /* function sumarDias(fecha, dias) {
     fecha.setDate(fecha.getDate() + dias);
     
