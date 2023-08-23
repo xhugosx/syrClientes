@@ -20,30 +20,30 @@ function setBuscarPedidosSearch(busqueda) {
     id = llenarCeros(id);
     //$('#tabla').empty(); 
     //$('#tabla').append("Buscando...");
-    if(busqueda == "") setBuscarPedidos();
+    if (busqueda == "") setBuscarPedidos();
     else
-    servidor('https://empaquessyrgdl.000webhostapp.com/empaquesSyR/lista_pedidos/selectAll.php?cliente=' + id+'&search='+busqueda+"&filtro=1&estado=0,1,2,3,5,6", getBuscarPedidos);
+        servidor('https://empaquessyrgdl.000webhostapp.com/empaquesSyR/lista_pedidos/selectAll.php?cliente=' + id + '&search=' + busqueda + "&filtro=1&estado=0,1,2,3,5,6", getBuscarPedidos);
 }
 
 function setBuscarPedidos() {
     var id = localStorage.getItem("id");
     id = llenarCeros(id);
-    
+
     //$('#tabla').empty(); 
     //$('#tabla').append("Buscando...");
 
-    servidor('https://empaquessyrgdl.000webhostapp.com/empaquesSyR/lista_pedidos/selectAll.php?cliente=' + id+"&filtro=1&estado=0,1,2,3,5,6,", getBuscarPedidos);
+    servidor('https://empaquessyrgdl.000webhostapp.com/empaquesSyR/lista_pedidos/selectAll.php?cliente=' + id + "&filtro=1&estado=0,1,2,3,5,6,", getBuscarPedidos);
 }
 function getBuscarPedidos(xhttp) {
 
     var respuesta = xhttp.responseText;
-    if(respuesta == ""){
+    if (respuesta == "") {
         $('#tabla').html("Sin resultados...");
         return 0;
-    } 
+    }
     var arrayJson = respuesta.split("|");
     var html = "";
-    html += '<table class="table table-sm">';
+    /*html += '<table class="table table-sm">';
     html += '            <thead>';
     html += '                <tr>';
     html += '                <th scope="col">Id</th>';
@@ -93,12 +93,64 @@ function getBuscarPedidos(xhttp) {
 
     }
     html += '        </tbody>';
-    html += '    </table>';
+    html += '    </table>';*/
+
+
+    for (var i = 0; i < arrayJson.length - 1; i++) {
+        let tempJson = JSON.parse(arrayJson[i]);
+        let estado, color;
+        if (tempJson.estado == 0) {
+            color = "#9b9b9b";
+            estado = "Pendiente";
+        } else if (tempJson.estado == 1) {
+            color = "#f7bd56";
+            estado = "Proceso";
+        } else if (tempJson.estado == 2 || tempJson.estado == 3) {
+            color = "#a5d3ae";
+            estado = "Terminado";
+        } else if (tempJson.estado == 5) {
+            color = "#ad69bc";
+            estado = "Parcial";
+        } else if (tempJson.estado == 6) {
+            color = "black";
+            estado = "Cancelada";
+        }
+        var d = new Date(tempJson.fecha_oc);
+        d = addDaysToDate(d, 20);
+
+        html += '<div class="col" style="margin:5px 0 5px 0">';
+        html += '    <div class=" h-100">';
+        html += '        <div class="card text-center h-100" style="height: 100;width: 18em;background:' + color + '" onclick="mensaje(\'fecha\'+'+i+')">';
+        html += '            <div class="card-header" style=" color:white">';
+        html += '                <span class="bold">ID: </span> ' + tempJson.id;
+        html += '                <span id="fecha'+i+'" style="float: right;" class="d-inline-block" data-toggle="popover" data-content="Fecha Pedido: ' + tempJson.fecha_oc + '" ><img src="elements/calendar2-fill.svg" width="13px" alt=""></span>';
+        html += '            </div>';
+        html += '            <ul class="list-group list-group-flush">';
+        html += '                <li class="list-group-item"><span class="bold">' + tempJson.codigo + '</span></li>';
+        html += '                <li class="list-group-item">' + tempJson.producto + '</li>';
+        html += '                <li class="list-group-item">  <span class="bold">' + tempJson.cantidad + ' pzas.</span>  </li>';
+        html += '                <li class="list-group-item">  <span class="bold">Estimado:</span>  ' + d + '</li>';
+        html += '            </ul>';
+        html += '            <div class="card-footer">';
+        html += '<span style="color: white; font-weight:bold">' + estado + '</span>';
+        html += '            </div>';
+        html += '        </div>';
+        html += '    </div>';
+        html += '</div>';
+
+    }
 
     $('#tabla').html(html);
     //alert(respuesta);
 
 
+}
+function mensaje(elemento) {
+    $('#' + elemento).popover('show');
+
+    setTimeout(() => {
+        $('#' + elemento).popover('hide');
+    }, 2000);
 }
 
 function servidor(link, miFuncion) {
@@ -136,9 +188,9 @@ function llenarCerosFecha(id) {
     else return id;
 
 }
-function addDaysToDate(date, days){
+function addDaysToDate(date, days) {
     date = new Date(date);
-    var fecha = new Date(date.getFullYear() + "-" + (date.getMonth()+2) + "-" + (date.getDate()+1) );
+    var fecha = new Date(date.getFullYear() + "-" + (date.getMonth() + 2) + "-" + (date.getDate() + 1));
     fecha.setDate(fecha.getDate() + days);
     return fecha.getFullYear() + "-" + llenarCerosFecha(fecha.getMonth()) + "-" + llenarCerosFecha(fecha.getDate());
 }

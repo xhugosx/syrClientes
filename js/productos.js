@@ -35,7 +35,7 @@ function getBuscarProductos(xhttp) {
     var arrayJson = respuesta.split("|");
     var html = "";
     html += '<table class="table table-sm">';
-    html += '            <thead>';
+    html += '            <thead style="background:rgba(47, 71, 92, 0.718);">';
     html += '                <tr>';
     html += '                    <th scope="col">Codigo</th>';
     html += '                    <th scope="col">Descripción</th>';
@@ -55,7 +55,7 @@ function getBuscarProductos(xhttp) {
             ? '<a href="https://empaquessyrgdl.000webhostapp.com/planos/' + cliente + '/' + codigo + '.pdf" target="_blank"><img src="elements/pdf-true.svg" class="pdf"></a>'
             : '<span id="element' + i + '" class="d-inline-block" data-toggle="popover" data-content="SIN PLANO - Solicite a su proveedor agregarlo" onclick="mensaje(\'element' + i + '\')"><img src="elements/pdf-false.svg" class="pdf" ></span>';
         let h = temp == 1 ? 'onclick="window.open(\'https://empaquessyrgdl.000webhostapp.com/planos/' + cliente + '/' + codigo + '.pdf\', \'_blank\')"' : 'onclick="mensaje(\'element' + i + '\')"';
-        html += '<tr ' + h + '>';
+        html += '<tr ' + h + ' class="resaltar">';
         html += '    <td scope="row">' + tempJson.codigo + '</td>';
         html += '    <td>' + tempJson.producto + '</td>';
         html += '    <td>$' + tempJson.precio + '</td>';

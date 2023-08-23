@@ -22,7 +22,7 @@ function setBuscarPedidosSearch(busqueda) {
     //$('#tabla').append("Buscando...");
     if (busqueda == "") setBuscarHistorial();
     else
-    servidor("https://empaquessyrgdl.000webhostapp.com/empaquesSyR/lista_pedidos/selectAllHistorialPedidos.php?filtro=1&estado=4,5,&cliente=" + id + "&search=" + busqueda, getBuscarHistorial);
+        servidor("https://empaquessyrgdl.000webhostapp.com/empaquesSyR/lista_pedidos/selectAllHistorialPedidos.php?filtro=1&estado=4,5,&cliente=" + id + "&search=" + busqueda, getBuscarHistorial);
 }
 //funciones para consultar tabla
 function setBuscarHistorial() {
@@ -41,7 +41,7 @@ function getBuscarHistorial(xhttp) {
     var arrayJson = respuesta.split("|");
     var html = "";
 
-    html += '<table class="table table-sm">';
+    /*html += '<table class="table table-sm">';
     html += '            <thead>';
     html += '                <tr>';
     html += '                <th scope="col">Id</th>';
@@ -52,8 +52,8 @@ function getBuscarHistorial(xhttp) {
     html += '                <th scope="col">Entrega Estimada</th>';
     html += '                <th scope="col">Estatus</th>';
     html += '                <th scope="col">Entregado</th>';
-    html += '                <th scope="col">Facturas</th>';
-    html += '                <th scope="col">Fechas</th>';
+    html += '                <th scope="col">Factura(s)</th>';
+    html += '                <th scope="col">Fecha(s)</th>';
     html += '                </tr>';
     html += '            </thead>';
     html += '            <tbody>';
@@ -91,7 +91,7 @@ function getBuscarHistorial(xhttp) {
         html += '    <td ">' + fechas[0] + '</td>';
         html += '</tr>';
         html += '<tr tr style="background:' + color + '">';
-        for (let j = 1; j < entregas.length; j++) html += '    <td>' + entregas[j] + '</td>';
+        for (let j = 1; j < entregas.length; j++) html += '    <td>' + entregas[j] + ' </td>';
         for (let j = 1; j < facturas.length; j++) html += '    <td>' + facturas[j] + '</td>';
         for (let j = 1; j < fechas.length; j++) html += '    <td>' + fechas[j] + '</td>';
         html += '</tr>'
@@ -100,7 +100,67 @@ function getBuscarHistorial(xhttp) {
 
     }
     html += '        </tbody>';
-    html += '    </table>';
+    html += '    </table>';*/
+
+    for (var i = 0; i < arrayJson.length - 1; i++) {
+        let tempJson = JSON.parse(arrayJson[i]);
+        let estado, color;
+        if (tempJson.estado == 4) {
+            color = "#3065ac";
+            estado = "Entregado";
+        } else if (tempJson.estado == 5) {
+            color = "#ad69bc";
+            estado = "Parcial";
+        }
+        var d = new Date(tempJson.fecha_oc);
+        d = addDaysToDate(d, 20);
+
+        var facturas = (tempJson.facturas).split(',');
+        var fechas = (tempJson.fechas).split(',');
+        var entregas = (tempJson.entregado).split(',');
+
+        html += '<div class="col" style="margin:5px 0 5px 0">';
+        html += '    <div class=" h-100">';
+        html += '        <div class="card text-center h-100" style="height: 100;width: 18em;background:' + color + '" onclick="mensaje(\'fecha\'+' + i + ')">';
+        html += '            <div class="card-header" style=" color:white">';
+        html += '                <span class="bold">ID: </span> ' + tempJson.id;
+        html += '                <span id="fecha' + i + '" style="float: right;" class="d-inline-block" data-toggle="popover" data-content="Fecha Pedido: ' + tempJson.fecha_oc + '" ><img src="elements/calendar2-fill.svg" width="13px" alt=""></span>';
+        html += '            </div>';
+        html += '            <ul class="list-group list-group-flush">';
+        html += '                <li class="list-group-item"><span class="bold">' + tempJson.codigo + '</span></li>';
+        html += '                <li class="list-group-item">' + tempJson.producto + '</li>';
+        html += '                <li class="list-group-item">  <span class="bold">' + tempJson.cantidad + ' pzas.</span>  </li>';
+        html += '                <li class="list-group-item">  <span class="bold">Estimado:</span>  ' + d + '</li>';
+        html += '<li class="list-group-item"> <center><table>';
+        html += '<tr>';
+        html += '    <th>Factura</th>';
+        html += '    <th>Entregado</th>';
+        html += '    <th>Fecha</th>';
+        html += '</tr>';
+        for (let j = 0; j < entregas.length; j++) {
+
+            //html += '  <span class="bold">Factura: </span>  ' + facturas[j] + " | " + entregas[j] + " | " + fechas[j] + "<br>";
+
+            html += '<tr>';
+            html += '    <td>' + facturas[j] + '</td>';
+            html += '    <td>' + entregas[j] + '</td>';
+            html += '    <td>' + fechas[j] + '</td>';
+            html += '</tr>';
+
+
+        }
+        html += '</table></center></li>';
+        //html += '                <li class="list-group-item">  <span class="bold">Factura</span>  ' + d + '</li>';
+        html += '            </ul>';
+        html += '            <div class="card-footer">';
+        html += '<span style="color: white; font-weight:bold">' + estado + '</span>';
+        html += '            </div>';
+        html += '        </div>';
+        html += '    </div>';
+        html += '</div>';
+
+    }
+
 
     $('#tabla').html(html);
     //alert(respuesta);
@@ -127,7 +187,13 @@ function servidor(link, miFuncion) {
         alert('Revisa tu conexión <i style="color:gray" class="fa-solid fa-wifi fa-lg"></i>');
     }
 }
+function mensaje(elemento) {
+    $('#' + elemento).popover('show');
 
+    setTimeout(() => {
+        $('#' + elemento).popover('hide');
+    }, 2000);
+}
 function llenarCeros(id) {
     id = String(id);
     //alert(id.length);

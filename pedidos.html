@@ -19,13 +19,11 @@
 <body onload="primero()">
 
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light"
-        style="background-color: #1A9CE8 !important; position: fixed; width: 100%;">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top"
+        style="background-color: #1A9CE8 !important; width: 100%; padding: 10px 5% 10px 5%;">
         <a class="navbar-brand" href="#" style="color: white;">
-            <div style="display: flex; justify-content: center;">
-                <h4>HISTORIAL PEDIDOS </h4> &#160;|&#160;
-                <h6>Bienvenido: </h6><br>
-                <h6><span id="cliente"></span></h6>
+            <div>
+                <span class="titulo">ESTATUS PEDIDOS </span>
             </div>
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -57,18 +55,62 @@
             </ul>
         </div>
     </nav>
-    <br><br><br>
-    <div style="display: flex; justify-content: center; margin: 0 7% 10px 7%;">
+
+    <br><br><br><br>
+    <!--div style="display: flex; justify-content: center; margin: 0 5% 10px 5%; width: 80%;">
         <input id="search" class="form-control mr-sm-2" type="search" placeholder="Buscar: Id / Codigo / Producto"
             aria-label="Search" onchange="setBuscarPedidosSearch(this.value)">
         <button class="btn btn-primary my-2 my-sm-0" type="submit"
-            onclick="setBuscarPedidosSearch($('#search').val())">Buscar</button>
-    </div>
+            onclick="setBuscarPedidosSearch($('#search').val())"><img src="elements/search.svg" alt=""></button>
+    </div-->
+    <center style="margin: 0 5% 10px 5%;">
+        <div style="float: right;">
+            <span class="cliente">
+                Bienvenido:
+                <span id="cliente"></span>
+            </span><br>
+        </div>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text" id="btnGroupAddon2" onclick="setBuscarPedidosSearch($('#search').val())">
+                    <img src="elements/search.svg" alt="">
+                </div>
+            </div>
+            <input id="search" type="text" class="form-control" placeholder="Buscar: Id / Codigo / Producto"
+                aria-describedby="btnGroupAddon2" onkeyup="setBuscarPedidosSearch($('#search').val())">
+
+        </div>
+        <br>
+        <!--prueba de diseño de card-->
+
+        <div id="tabla" style="align-items: center;" class="row row-cols-1 row-cols-md-3 g-4">
+            <!--div class="col">
+            <div class="card h-100">
+                <div class="card text-center" style="width: 18rem;">
+                    <div class="card-header" style="background-color: #1a9ce8ab; color:white">
+                        <span class="bold">ID: </span> 2023065-90
+                        <div style="float: right;"><img src="elements/calendar2-fill.svg" width="13px" alt=""></div>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><span class="bold">065/183</span></li>
+                        <li class="list-group-item"> CAJA ORBE 4 IN M-6</li>
+                        <li class="list-group-item">  <span class="bold">Estimado:</span>  2023-08-17 </li>
+                    </ul>
+                    <div class="card-footer">
+                        Pendiente
+                    </div>
+                </div>
+            </div>
+        </div-->
+        </div>
+    </center>
+
+
     <!--contenido de div -->
-    <div id="tabla" style="margin: 0 7% 0 7%; box-shadow: 0px 0px 5px 8px rgba(0,0,0,0.11) !important;">
+    <!--div id="tabla" style="margin: 0 7% 0 7%; box-shadow: 0px 0px 5px 8px rgba(0,0,0,0.11) !important;">
         <br>
         Buscando...
-    </div>
+    </div-->
 
     <br><br><br>
 

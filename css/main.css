@@ -22,13 +22,15 @@ body {
 
 .inicio {
     position: fixed;
-    bottom:75%;
+    bottom: 75%;
     text-align: center;
     font-family: Verdana, sans-serif;
     font-weight: bold;
     color: rgb(69, 69, 69);
 }
-
+table>thead>tr>th{
+    color: white;
+}
 .pdf {
     width: 25px;
     cursor: pointer;
@@ -38,44 +40,95 @@ body {
     opacity: 30%;
 }
 
-th {
-    color: rgb(255, 255, 255);
-    
-
-}
-th, td{
-    padding: 5px 8x 5px 8px !important;
-}
-
-thead {
-    background-color: rgb(99, 99, 99);
-}
-
 table {
-    border-radius: 20px !important;
+    text-align: center;
 }
 
-tbody>tr:hover {
+th {
+    color: rgb(97, 97, 97);
 
-    background-color: rgb(143, 205, 234) !important;
-    color: white;
+
+}
+
+td {
+    padding: 10px;
+}
+
+.resaltar:hover {
     cursor: pointer;
-    box-shadow: 0px 0px 1px 2px rgba(0,0,0,0.11);
+    background-color: rgba(62, 121, 172, 0.718);
+    color: white;
 }
-*{
+
+* {
     font-family: 'Courier New', Courier, monospace;
 }
-.escondeExtra{
+
+.escondeExtra {
     visibility: hidden;
     position: absolute;
 }
 
-.active{
+.active {
     font-weight: bold !important;
 }
-h4{
+
+h4 {
     font-weight: bold;
 }
-#cliente{
+
+#cliente {
     font-weight: bold;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.cliente {
+    font-size: 15px;
+    width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+li {
+    font-size: smaller;
+}
+
+.titulo {
+    background-color: white;
+    color: rgb(73, 73, 73);
+    padding: 10px;
+    border-radius: 20px 0 20px 0;
+    font-weight: bold;
+}
+
+.nav-link {
+    color: white !important;
+    font-size: medium;
+}
+
+.fecha:hover {
+    cursor: pointer;
+}
+
+.card:hover {
+    animation: avall 2s infinite;
+    cursor: pointer;
+}
+
+@keyframes avall {
+    0% {
+        top: 0px;
+        transform: scale(1);
+    }
+
+    50% {
+        top: 90%;
+        transform: scale(1.05);
+    }
+
+    /*0% {top: 100%; transform:scale(1);}*/
 }
