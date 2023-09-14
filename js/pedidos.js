@@ -38,7 +38,7 @@ function getBuscarPedidos(xhttp) {
 
     var respuesta = xhttp.responseText;
     if (respuesta == "") {
-        $('#tabla').html("Sin resultados...");
+        $('#tabla').html("Sin Pedidos Pendientes...");
         return 0;
     }
     var arrayJson = respuesta.split("|");

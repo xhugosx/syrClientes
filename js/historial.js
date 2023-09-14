@@ -47,7 +47,7 @@ function getBuscarHistorial(xhttp) {
         $('#registros2').html(html);
         return 0;
     }
-    console.log(respuesta);
+    //console.log(respuesta);
     var arrayJson = respuesta.split("|");
     var contador = arrayJson[arrayJson.length - 1];
     contador = parseInt(contador);

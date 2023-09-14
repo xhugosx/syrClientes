@@ -13,7 +13,7 @@ function getEntrar(xhttp)
     var respuesta = xhttp.responseText;
     //alert(respuesta);
     //var array;
-    if(respuesta != ""){
+    if(respuesta != "" || respuesta != 0){
         respuesta = respuesta.split(',');
         let id = respuesta[0];
         let rfc = respuesta[1];
@@ -23,6 +23,7 @@ function getEntrar(xhttp)
         localStorage.setItem("rfc",rfc);
         localStorage.setItem("nombre", nombre);
         window.location.href = "productos.html";
+        //alert(respuesta);
     }
     else{
         alert("RFC o contraseña incorrecta!");
