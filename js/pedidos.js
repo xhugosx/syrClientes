@@ -43,59 +43,6 @@ function getBuscarPedidos(xhttp) {
     }
     var arrayJson = respuesta.split("|");
     var html = "";
-    /*html += '<table class="table table-sm">';
-    html += '            <thead>';
-    html += '                <tr>';
-    html += '                <th scope="col">Id</th>';
-    html += '                <th scope="col">Codigo</th>';
-    html += '                <th scope="col">Producto</th>';
-    html += '                <th scope="col">Piezas</th>';
-    html += '                <th scope="col">Fecha Pedido</th>';
-    html += '                <th scope="col">Entrega Estimada</th>';
-    html += '                <th scope="col">Estatus</th>';
-    html += '                </tr>';
-    html += '            </thead>';
-    html += '            <tbody>';
-
-    for (var i = 0; i < arrayJson.length - 1; i++) {
-        let tempJson = JSON.parse(arrayJson[i]);
-        let estado, color;
-        if (tempJson.estado == 0) {
-            color = "#dfdfdfc7";
-            estado = "Pendiente";
-        } else if (tempJson.estado == 1) {
-            color = "#e9a371b0";
-            estado = "Proceso";
-        } else if(tempJson.estado == 2 || tempJson.estado == 3) {
-            color = "#77dd778f";
-            estado = "Terminado";
-        }else if (tempJson.estado == 5) {
-            color = "rgba(161, 133, 148, 0.657)";
-            estado = "Parcial";
-        }else if (tempJson.estado == 6) {
-            color = "rgba(83, 83, 83, 0.605)";
-            estado = "Cancelada";
-        }
-        var d = new Date(tempJson.fecha_oc);
-        d = addDaysToDate(d, 20);
-        //console.log();
-        //console.log(tempJson);
-        html += '<tr style="background:' + color + '">';
-        html += '    <td>' + tempJson.id + '</td>';
-        html += '    <td>' + tempJson.codigo + '</td>';
-        html += '    <td>' + tempJson.producto + '</td>';
-        html += '    <td>' + tempJson.cantidad + '</td>';
-        html += '    <td>' + tempJson.fecha_oc + '</td>';
-        html += '    <td>'+d+'</td>';
-        html += '    <td>' + estado + '</td>';
-        html += '</tr>';
-
-
-    }
-    html += '        </tbody>';
-    html += '    </table>';*/
-
-
     for (var i = 0; i < arrayJson.length - 1; i++) {
         let tempJson = JSON.parse(arrayJson[i]);
         let estado, color;
@@ -120,16 +67,17 @@ function getBuscarPedidos(xhttp) {
 
         html += '<div class="col" style="margin:5px 0 5px 0">';
         html += '    <div class=" h-100">';
-        html += '        <div class="card text-center h-100" style="height: 100;width: 18em;background:' + color + '" onclick="mensaje(\'fecha\'+'+i+')">';
+        html += '        <div class="card text-center h-100" style="height: 100;width: 18em;background:' + color + '" onclick="mensaje(\'fecha\'+' + i + ')">';
         html += '            <div class="card-header" style=" color:white">';
         html += '                <span class="bold">ID: </span> ' + tempJson.id;
-        html += '                <span id="fecha'+i+'" style="float: right;" class="d-inline-block" data-toggle="popover" data-content="Fecha Pedido: ' + tempJson.fecha_oc + '" ><img src="elements/calendar2-fill.svg" width="13px" alt=""></span>';
+        html += '                <span id="fecha' + i + '" style="float: right;" class="d-inline-block" data-toggle="popover" data-content="Fecha Pedido: ' + tempJson.fecha_oc + '" ><img src="elements/calendar2-fill.svg" width="13px" alt=""></span>';
         html += '            </div>';
         html += '            <ul class="list-group list-group-flush">';
         html += '                <li class="list-group-item"><span class="bold">' + tempJson.codigo + '</span></li>';
         html += '                <li class="list-group-item">' + tempJson.producto + '</li>';
         html += '                <li class="list-group-item">  <span class="bold">' + tempJson.cantidad + ' pzas.</span>  </li>';
         html += '                <li class="list-group-item" style="font-size: 10px">  <span class="bold">Entrega estimada: <br></span>  ' + d + '</li>';
+        html += '                <li class="list-group-item" style="font-size: 15px; font-weight:bold">  <span class="bold">O.C: </span>  ' + tempJson.oc + '</li>';
         html += '            </ul>';
         html += '            <div class="card-footer">';
         html += '<span style="color: white; font-weight:bold">' + estado + '</span>';
@@ -137,12 +85,8 @@ function getBuscarPedidos(xhttp) {
         html += '        </div>';
         html += '    </div>';
         html += '</div>';
-
     }
-
     $('#tabla').html(html);
-    //alert(respuesta);
-
 
 }
 function mensaje(elemento) {
@@ -198,7 +142,7 @@ function addDaysToDate(fecha, dias) {
     // Construimos el formato de salida
     fecha = dias_semana[fecha.getDay()] + ', ' + fecha.getDate() + ' de ' + meses[fecha.getMonth()] + ' de ' + fecha.getUTCFullYear();
     return fecha;
-  }
+}
 /* function sumarDias(fecha, dias) {
     fecha.setDate(fecha.getDate() + dias);
     

@@ -68,34 +68,37 @@
                     <img src="elements/search.svg" alt="">
                 </div>
             </div>
-            <input id="search" type="text" class="form-control" placeholder="Buscar: Id / Codigo / Producto"
+            <input id="search" type="text" class="form-control" placeholder="Buscar: Id / Codigo / Producto / Factura"
                 aria-describedby="btnGroupAddon2" onkeyup="setBuscarPedidosSearch($('#search').val())">
 
         </div>
         <br>
-        <!--prueba de diseño de card-->
+        <!--paginacion-->
+
+        <a id="registros"></a>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center" id="paginacionContenido">
+
+            </ul>
+        </nav>
+        <br>
 
         <div id="tabla" style="align-items: center;" class="row row-cols-1 row-cols-md-3 g-4">
-            <!--div class="col">
-            <div class="card h-100">
-                <div class="card text-center" style="width: 18rem;">
-                    <div class="card-header" style="background-color: #1a9ce8ab; color:white">
-                        <span class="bold">ID: </span> 2023065-90
-                        <div style="float: right;"><img src="elements/calendar2-fill.svg" width="13px" alt=""></div>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><span class="bold">065/183</span></li>
-                        <li class="list-group-item"> CAJA ORBE 4 IN M-6</li>
-                        <li class="list-group-item">  <span class="bold">Estimado:</span>  2023-08-17 </li>
-                    </ul>
-                    <div class="card-footer">
-                        Pendiente
-                    </div>
-                </div>
-            </div>
-        </div-->
+
         </div>
+        <br>
+        <!--paginacion-->
+
+        <a id="registros2"></a>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center" id="paginacionContenido2">
+
+            </ul>
+        </nav>
+        <br>
     </center>
+
+
 
     <br><br><br>
 

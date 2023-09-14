@@ -1,3 +1,7 @@
+//funcion para generar limite de registros
+var pagina = 1;
+var min = 1, max = 20;
+
 function primero() {
     //aqui ira la validacion de si ya inicio sesion
     if (localStorage.getItem('nombre') != null) {
@@ -34,75 +38,25 @@ function setBuscarHistorial() {
 function getBuscarHistorial(xhttp) {
 
     var respuesta = xhttp.responseText;
-    if (respuesta == "") {
+    if (respuesta == "" || respuesta == 0) {
         $('#tabla').html("Sin resultados...");
+        let html = "";
+        $('#paginacionContenido').html(html);
+        $('#paginacionContenido2').html(html);
+        $('#registros').html(html);
+        $('#registros2').html(html);
         return 0;
     }
+    console.log(respuesta);
     var arrayJson = respuesta.split("|");
+    var contador = arrayJson[arrayJson.length - 1];
+    contador = parseInt(contador);
+    //console.log("cantidad de datos: " + contador);
     var html = "";
+    min = pagina == 1 ? 1 : (pagina * 20) - 19;
+    max = pagina * 20;
 
-    /*html += '<table class="table table-sm">';
-    html += '            <thead>';
-    html += '                <tr>';
-    html += '                <th scope="col">Id</th>';
-    html += '                <th scope="col">Codigo</th>';
-    html += '                <th scope="col">Producto</th>';
-    html += '                <th scope="col">Piezas</th>';
-    html += '                <th scope="col">Fecha Pedido</th>';
-    html += '                <th scope="col">Entrega Estimada</th>';
-    html += '                <th scope="col">Estatus</th>';
-    html += '                <th scope="col">Entregado</th>';
-    html += '                <th scope="col">Factura(s)</th>';
-    html += '                <th scope="col">Fecha(s)</th>';
-    html += '                </tr>';
-    html += '            </thead>';
-    html += '            <tbody>';
-
-    for (var i = 0; i < arrayJson.length - 1; i++) {
-
-        let tempJson = JSON.parse(arrayJson[i]);
-        let estado, color;
-        if (tempJson.estado == 4) {
-            color = "#3f90eda5";
-            estado = "Entregado";
-        } else if (tempJson.estado == 5) {
-            color = "rgba(161, 133, 148, 0.657)";
-            estado = "Parcial";
-        }
-        var d = new Date(tempJson.fecha_oc);
-        d = addDaysToDate(d, 20);
-        //console.log();
-        //console.log(tempJson);
-
-        var facturas = (tempJson.facturas).split(',');
-        var fechas = (tempJson.fechas).split(',');
-        var entregas = (tempJson.entregado).split(',');
-
-        html += '<tr style="background:' + color + '">';
-        html += '    <td rowspan="' + facturas.length + '">' + tempJson.id + '</td>';
-        html += '    <td rowspan="' + facturas.length + '">' + tempJson.codigo + '</td>';
-        html += '    <td rowspan="' + facturas.length + '">' + tempJson.producto + '</td>';
-        html += '    <td rowspan="' + facturas.length + '">' + tempJson.cantidad + '</td>';
-        html += '    <td rowspan="' + facturas.length + '">' + tempJson.fecha_oc + '</td>';
-        html += '    <td rowspan="' + facturas.length + '">' + d + '</td>';
-        html += '    <td rowspan="' + facturas.length + '">' + estado + '</td>';
-        html += '    <td >' + entregas[0] + '</td>';
-        html += '    <td >' + facturas[0] + '</td>';
-        html += '    <td ">' + fechas[0] + '</td>';
-        html += '</tr>';
-        html += '<tr tr style="background:' + color + '">';
-        for (let j = 1; j < entregas.length; j++) html += '    <td>' + entregas[j] + ' </td>';
-        for (let j = 1; j < facturas.length; j++) html += '    <td>' + facturas[j] + '</td>';
-        for (let j = 1; j < fechas.length; j++) html += '    <td>' + fechas[j] + '</td>';
-        html += '</tr>'
-
-
-
-    }
-    html += '        </tbody>';
-    html += '    </table>';*/
-
-    for (var i = 0; i < arrayJson.length - 1; i++) {
+    for (var i = min - 1; i < arrayJson.length - 1 && i < max; i++) {
         let tempJson = JSON.parse(arrayJson[i]);
         let estado, color;
         if (tempJson.estado == 4) {
@@ -118,6 +72,7 @@ function getBuscarHistorial(xhttp) {
         var facturas = (tempJson.facturas).split(',');
         var fechas = (tempJson.fechas).split(',');
         var entregas = (tempJson.entregado).split(',');
+        var suma = 0;
 
         html += '<div class="col" style="margin:5px 0 5px 0">';
         html += '    <div class=" h-100">';
@@ -131,6 +86,7 @@ function getBuscarHistorial(xhttp) {
         html += '                <li class="list-group-item">' + tempJson.producto + '</li>';
         html += '                <li class="list-group-item">  <span class="bold">' + tempJson.cantidad + ' pzas.</span>  </li>';
         html += '                <li class="list-group-item" style="font-size: 10px">  <span class="bold">Entrega estimada: <br></span>  ' + d + '</li>';
+        html += '                <li class="list-group-item" style="font-size: 15px; font-weight:bold">  <span class="bold">O.C: </span>  ' + tempJson.oc + '</li>';
         html += '<li class="list-group-item"> <center><table>';
         html += '<tr>';
         html += '    <th>Factura</th>';
@@ -146,9 +102,17 @@ function getBuscarHistorial(xhttp) {
             html += '    <td>' + entregas[j] + '</td>';
             html += '    <td>' + fechas[j] + '</td>';
             html += '</tr>';
+            suma += parseInt(entregas[j]);
 
 
         }
+        
+        html += '<tr>';
+        html += '    <td></td>';
+        html += '    <td><b>Total: </b></td>';
+        html += '    <td><b>' + suma + ' pzas.</b></td>';
+        html += '</tr>';
+
         html += '</table></center></li>';
         //html += '                <li class="list-group-item">  <span class="bold">Factura</span>  ' + d + '</li>';
         html += '            </ul>';
@@ -161,11 +125,36 @@ function getBuscarHistorial(xhttp) {
 
     }
 
-
+    paginacion(contador);
+    $('#tabla').html("");
     $('#tabla').html(html);
     //alert(respuesta);
 
 
+}
+function paginacion(contador) {
+    var paginas = contador / 20;
+    if (contador % 20 != 0) {
+        paginas = parseInt(paginas) + 1;
+    }
+    var html = "";
+    for (var i = 0; i < paginas; i++) {
+        var active = "";
+        if (pagina == (i + 1)) active = "active";
+        html += '<li class="page-item ' + active + '"><a class="page-link" onclick="cambiarPagina(' + (i + 1) + ')">' + (i + 1) + '</a></li>';
+    }
+    $('#paginacionContenido').html(html);
+    $('#paginacionContenido2').html(html);
+    let limite = max > contador ? contador : max;
+    html = min + " de " + limite + " / " + contador + " Pedidos";
+    $('#registros').html(html);
+    $('#registros2').html(html);
+}
+function cambiarPagina(page) {
+    pagina = page;
+    //para filtrar por busqueda
+    let busqueda = $('#search').val();
+    setBuscarPedidosSearch(busqueda)
 }
 function servidor(link, miFuncion) {
     if (window.navigator.onLine) {
@@ -224,4 +213,4 @@ function addDaysToDate(fecha, dias) {
     // Construimos el formato de salida
     fecha = dias_semana[fecha.getDay()] + ', ' + fecha.getDate() + ' de ' + meses[fecha.getMonth()] + ' de ' + fecha.getUTCFullYear();
     return fecha;
-  }
+}
