@@ -26,14 +26,14 @@ function setBuscarPedidosSearch(busqueda) {
     //$('#tabla').append("Buscando...");
     if (busqueda == "") setBuscarHistorial();
     else
-        servidor("https://empaquessyrgdl.000webhostapp.com/empaquesSyR/lista_pedidos/selectAllHistorialPedidos.php?filtro=1&estado=4,5,&cliente=" + id + "&search=" + busqueda, getBuscarHistorial);
+        servidor("https://empaquessr.com/sistema/php/lista_pedidos/selectAllHistorialPedidos.php?filtro=1&estado=4,5,&cliente=" + id + "&search=" + busqueda, getBuscarHistorial);
 }
 //funciones para consultar tabla
 function setBuscarHistorial() {
     var id = localStorage.getItem("id");
     id = llenarCeros(id);
 
-    servidor("https://empaquessyrgdl.000webhostapp.com/empaquesSyR/lista_pedidos/selectAllHistorialPedidos.php?filtro=1&estado=4,5,&cliente=" + id, getBuscarHistorial);
+    servidor("https://empaquessr.com/sistema/php/lista_pedidos/selectAllHistorialPedidos.php?filtro=1&estado=4,5,&cliente=" + id, getBuscarHistorial);
 }
 function getBuscarHistorial(xhttp) {
 

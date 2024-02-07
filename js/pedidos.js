@@ -22,7 +22,7 @@ function setBuscarPedidosSearch(busqueda) {
     //$('#tabla').append("Buscando...");
     if (busqueda == "") setBuscarPedidos();
     else
-        servidor('https://empaquessyrgdl.000webhostapp.com/empaquesSyR/lista_pedidos/selectAll.php?cliente=' + id + '&search=' + busqueda + "&filtro=1&estado=0,1,2,3,5,6", getBuscarPedidos);
+        servidor('https://empaquessr.com/sistema/php/lista_pedidos/selectAll.php?cliente=' + id + '&search=' + busqueda + "&filtro=1&estado=0,1,2,3,5,6", getBuscarPedidos);
 }
 
 function setBuscarPedidos() {
@@ -32,7 +32,7 @@ function setBuscarPedidos() {
     //$('#tabla').empty(); 
     //$('#tabla').append("Buscando...");
 
-    servidor('https://empaquessyrgdl.000webhostapp.com/empaquesSyR/lista_pedidos/selectAll.php?cliente=' + id + "&filtro=1&estado=0,1,2,3,5,6,", getBuscarPedidos);
+    servidor('https://empaquessr.com/sistema/php/lista_pedidos/selectAll.php?cliente=' + id + "&filtro=1&estado=0,1,2,3,5,6,", getBuscarPedidos);
 }
 function getBuscarPedidos(xhttp) {
 

@@ -18,13 +18,13 @@ function cerrarSesion() {
 function setBuscarProductosSearch(search) {
     var id = localStorage.getItem("id");
     id = llenarCeros(id);
-    servidor('https://empaquessyrgdl.000webhostapp.com/empaquesSyR/productos/select.php?type=4&search=' + search + '&cliente=' + id, getBuscarProductos)
+    servidor('https://empaquessr.com/sistema/php/productos/select.php?type=4&search=' + search + '&cliente=' + id, getBuscarProductos)
 }
 
 function setBuscarProductos() {
     var id = localStorage.getItem("id");
     id = llenarCeros(id);
-    servidor('https://empaquessyrgdl.000webhostapp.com/empaquesSyR/productos/select.php?type=1&search=' + id, getBuscarProductos)
+    servidor('https://empaquessr.com/sistema/php/productos/select.php?type=1&search=' + id, getBuscarProductos)
 }
 function getBuscarProductos(xhttp) {
     var respuesta = xhttp.responseText;
@@ -52,9 +52,9 @@ function getBuscarProductos(xhttp) {
         let codigo = tempJson.codigo.replace("/", "-");
         let temp = tempJson.file
         tempJson.file = temp == 1
-            ? '<a href="https://empaquessyrgdl.000webhostapp.com/planos/' + cliente + '/' + codigo + '.pdf" target="_blank"><img src="elements/pdf-true.svg" class="pdf"></a>'
+            ? '<a href="https://empaquessr.com/sistema/planos/' + cliente + '/' + codigo + '.pdf" target="_blank"><img src="elements/pdf-true.svg" class="pdf"></a>'
             : '<span id="element' + i + '" class="d-inline-block" data-toggle="popover" data-content="SIN PLANO - Solicite a su proveedor agregarlo" onclick="mensaje(\'element' + i + '\')"><img src="elements/pdf-false.svg" class="pdf" ></span>';
-        let h = temp == 1 ? 'onclick="window.open(\'https://empaquessyrgdl.000webhostapp.com/planos/' + cliente + '/' + codigo + '.pdf\', \'_blank\')"' : 'onclick="mensaje(\'element' + i + '\')"';
+        let h = temp == 1 ? 'onclick="window.open(\'https://empaquessr.com/sistema/planos/' + cliente + '/' + codigo + '.pdf\', \'_blank\')"' : 'onclick="mensaje(\'element' + i + '\')"';
         html += '<tr ' + h + ' class="resaltar">';
         html += '    <td scope="row">' + tempJson.codigo + '</td>';
         html += '    <td>' + tempJson.producto + '</td>';
