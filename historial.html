@@ -8,8 +8,9 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
 
-    <link rel="shortcut icon" href="elements/pagina.svg">
+    <link rel="shortcut icon" href="elements/Recurso-2-8.ico">
 
     <link rel="stylesheet" href="css/main.css">
     <script src="js/historial.js"></script>
@@ -64,43 +65,58 @@
         </div>
         <div class="input-group">
             <div class="input-group-prepend">
-                <div class="input-group-text" id="btnGroupAddon2" onclick="setBuscarPedidosSearch($('#search').val())">
-                    <img src="elements/search.svg" alt="">
+                <div class="input-group-text" id="btnGroupAddon2">
+                    <i class="fas fa-search"></i>
                 </div>
             </div>
             <input id="search" type="text" class="form-control" placeholder="Buscar: Id / Codigo / Producto / Factura"
-                aria-describedby="btnGroupAddon2" onkeyup="setBuscarPedidosSearch($('#search').val())">
+                aria-describedby="btnGroupAddon2" onkeyup="setBuscarHistorial()">
+            <!-- Select de grupos -->
+            <div class="group-select">
+                <label for="grupos" class="label-grupos">Grupos</label>
+                <div class="select-wrap">
+                    <select id="grupos" name="grupos" onchange="setBuscarHistorialGrupo()">
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="200">200</option>
+                        <option value="500">500</option>
+                    </select>
+                    <!-- Flecha decorativa -->
+                    <span class="select-arrow" aria-hidden="true">▾</span>
+                </div>
+            </div>
 
+            <!-- Botones de navegación -->
+            <div class="nav-buttons">
+                <button id="prevPage" onclick="cambiarPagina(-1)">&#8592;</button>
+                <span id="currentPage">1</span>
+                <span id="totalPages">/ 1</span>
+                <button id="nextPage" onclick="cambiarPagina(1)">&#8594;</button>
+            </div>
         </div>
         <br>
         <!--paginacion-->
 
-        <a id="registros"></a>
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center" id="paginacionContenido">
-
-            </ul>
-        </nav>
-        <br>
 
         <div id="tabla" style="align-items: center;" class="row row-cols-1 row-cols-md-3 g-4">
 
         </div>
-        <br>
-        <!--paginacion-->
 
-        <a id="registros2"></a>
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center" id="paginacionContenido2">
-
-            </ul>
-        </nav>
-        <br>
     </center>
 
 
 
     <br><br><br>
+
+    <div style="padding: 15px; position: fixed; bottom: 10px; left:10px;" class="esconder">
+
+        <a class="btn btn-primary" href="#">
+            Subir
+            <i class="fas fa-arrow-up"></i>
+        </a>
+
+    </div>
 
     <!--fin de contenido-->
 

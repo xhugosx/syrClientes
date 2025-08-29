@@ -8,8 +8,9 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
 
-    <link rel="shortcut icon" href="elements/pagina.svg">
+    <link rel="shortcut icon" href="elements/Recurso-2-8.ico">
 
     <link rel="stylesheet" href="css/main.css">
     <script src="js/pedidos.js"></script>
@@ -48,7 +49,7 @@
                 </li>
                 <li class="nav-item ">
                     <a class="nav-link" href="" onclick="cerrarSesion()"
-                        style="color: rgb(255, 255, 255); background-color: rgb(186, 73, 73); border-radius: 15px; font-weight: bold; padding: 10px 10px  10px 10px;">
+                        style="color: rgb(255, 255, 255); background-color: rgb(186, 73, 73); border-radius: 10px; font-weight: bold; padding: 10px 10px  10px 10px;">
                         Cerrar Sesión
                     </a>
                 </li>
@@ -72,12 +73,36 @@
         </div>
         <div class="input-group">
             <div class="input-group-prepend">
-                <div class="input-group-text" id="btnGroupAddon2" onclick="setBuscarPedidosSearch($('#search').val())">
-                    <img src="elements/search.svg" alt="">
+                <div class="input-group-text" id="btnGroupAddon2">
+                    <i class="fas fa-search"></i>
                 </div>
             </div>
             <input id="search" type="text" class="form-control" placeholder="Buscar: Id / Codigo / Producto"
-                aria-describedby="btnGroupAddon2" onkeyup="setBuscarPedidosSearch($('#search').val())">
+                aria-describedby="btnGroupAddon2" onkeyup="setBuscarPedidos()">
+
+            <!-- Select de grupos -->
+            <div class="group-select">
+                <label for="grupos" class="label-grupos">Grupos</label>
+                <div class="select-wrap">
+                    <select id="grupos" name="grupos" onchange="setBuscarPedidosGrupo()">
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="200">200</option>
+                        <option value="500">500</option>
+                    </select>
+                    <!-- Flecha decorativa -->
+                    <span class="select-arrow" aria-hidden="true">▾</span>
+                </div>
+            </div>
+
+            <!-- Botones de navegación -->
+            <div class="nav-buttons">
+                <button id="prevPage" onclick="cambiarPagina(-1)">&#8592;</button>
+                <span id="currentPage">1</span>
+                <span id="totalPages">/ 1</span>
+                <button id="nextPage" onclick="cambiarPagina(1)">&#8594;</button>
+            </div>
 
         </div>
         <br>

@@ -1,7 +1,6 @@
 //funcion para generar limite de registros
 var pagina = 1;
-var min = 1, max = 20;
-
+var link = "https://empaquessr.com/sistema/empaquessr_2/php/";
 function primero() {
     //aqui ira la validacion de si ya inicio sesion
     if (localStorage.getItem('nombre') != null) {
@@ -18,144 +17,130 @@ function cerrarSesion() {
         window.location.href = "index.html";
     }
 }
-//funcion para hacer una busqueda
-function setBuscarPedidosSearch(busqueda) {
-    var id = localStorage.getItem("id");
-    id = llenarCeros(id);
-    //$('#tabla').empty(); 
-    //$('#tabla').append("Buscando...");
-    if (busqueda == "") setBuscarHistorial();
-    else
-        servidor("https://empaquessr.com/sistema/php/lista_pedidos/selectAllHistorialPedidos.php?filtro=1&estado=4,5,&cliente=" + id + "&search=" + busqueda, getBuscarHistorial);
+function setBuscarHistorialGrupo() {
+    $('#currentPage').text(1);
+    pagina = 1;
+    setBuscarHistorial();
+}
+
+function cambiarPagina(paginaCambio) {
+    pagina += paginaCambio;
+    setBuscarHistorial();
 }
 //funciones para consultar tabla
 function setBuscarHistorial() {
     var id = localStorage.getItem("id");
     id = llenarCeros(id);
-
-    servidor("https://empaquessr.com/sistema/php/lista_pedidos/selectAllHistorialPedidos.php?filtro=1&estado=4,5,&cliente=" + id, getBuscarHistorial);
+    let busqueda = $('#search').val();
+    let cantidad = $('#grupos').val();
+    //console.log(link + "lista_pedidos/cliente/selectAll.php?filtro=1&estado=4,5,&cliente=" + id + "&search=" + busqueda + "&cantidad=" + cantidad + "&pagina=" + pagina);
+    servidor(link + "lista_pedidos/cliente/selectAll.php?filtro=1&estado=4,5,&cliente=" + id + "&search=" + busqueda + "&cantidad=" + cantidad + "&pagina=" + pagina, getBuscarHistorial);
 }
 function getBuscarHistorial(xhttp) {
-
     var respuesta = xhttp.responseText;
+
     if (respuesta == "" || respuesta == 0) {
         $('#tabla').html("Sin resultados...");
-        let html = "";
-        $('#paginacionContenido').html(html);
-        $('#paginacionContenido2').html(html);
-        $('#registros').html(html);
-        $('#registros2').html(html);
-        return 0;
+        return;
     }
-    //console.log(respuesta);
+
     var arrayJson = respuesta.split("|");
-    var contador = arrayJson[arrayJson.length - 1];
-    contador = parseInt(contador);
-    //console.log("cantidad de datos: " + contador);
-    var html = "";
-    min = pagina == 1 ? 1 : (pagina * 20) - 19;
-    max = pagina * 20;
 
-    for (var i = min - 1; i < arrayJson.length - 1 && i < max; i++) {
-        let tempJson = JSON.parse(arrayJson[i]);
-        let estado, color;
-        if (tempJson.estado == 4) {
-            color = "#3065ac";
-            estado = "Entregado";
-        } else if (tempJson.estado == 5) {
-            color = "#ad69bc";
-            estado = "Parcial";
-        }
-        var d = new Date(tempJson.fecha_oc);
-        d = addDaysToDate(d, 20);
+    let filas = arrayJson
+        .slice(0, -2)
+        .map((item, i) => {
+            let tempJson = JSON.parse(item);
+            let estado, color, icono;
 
-        var facturas = (tempJson.facturas).split(',');
-        var fechas = (tempJson.fechas).split(',');
-        var entregas = (tempJson.entregado).split(',');
-        var suma = 0;
+            switch (tempJson.estado) {
+                case '4':
+                    estado = " Entregado";
+                    color = "#3066acd0";
+                    icono = '<i class="fa fa-check-circle"></i>';
+                    break;
+                case '5':
+                    estado = " Parcial";
+                    color = "#ad69bcbe";
+                    icono = '<i class="fa fa-circle-half-stroke"></i>';
+                    break;
+                default:
+                    estado = " Desconocido";
+                    color = "#ffffff";
+                    icono = '<i class="fa fa-question-circle"></i>';
+            }
+            //console.log(tempJson);
+            let facturas = tempJson.facturas.split(',');
+            let fechas = tempJson.fecha_factura.split(',');
+            let entregas = tempJson.entregado.split(',');
+            let suma = 0;
+            let entrega = 0;
 
-        html += '<div class="col" style="margin:5px 0 5px 0">';
-        html += '    <div class=" h-100">';
-        html += '        <div class="card text-center h-100" style="height: 100;width: 18em;background:' + color + '" onclick="mensaje(\'fecha\'+' + i + ')">';
-        html += '            <div class="card-header" style=" color:white">';
-        html += '                <span class="bold">ID: </span> ' + tempJson.id;
-        html += '                <span id="fecha' + i + '" style="float: right;" class="d-inline-block" data-toggle="popover" data-content="Fecha Pedido: ' + tempJson.fecha_oc + '" ><img src="elements/calendar2-fill.svg" width="13px" alt=""></span>';
-        html += '            </div>';
-        html += '            <ul class="list-group list-group-flush">';
-        html += '                <li class="list-group-item"><span class="bold">' + tempJson.codigo + '</span></li>';
-        html += '                <li class="list-group-item">' + tempJson.producto + '</li>';
-        html += '                <li class="list-group-item">  <span class="bold">' + tempJson.cantidad + ' pzas.</span>  </li>';
-        html += '                <li class="list-group-item" style="font-size: 10px">  <span class="bold">Entrega estimada: <br></span>  ' + d + '</li>';
-        html += '                <li class="list-group-item" style="font-size: 15px; font-weight:bold">  <span class="bold">O.C: </span>  ' + tempJson.oc + '</li>';
-        html += '<li class="list-group-item"> <center><table>';
-        html += '<tr>';
-        html += '    <th>Factura</th>';
-        html += '    <th>Entregado</th>';
-        html += '    <th>Fecha</th>';
-        html += '</tr>';
-        for (let j = 0; j < entregas.length; j++) {
+            // Construir lista compacta de facturas
+            let facturasHtml = facturas.map((f, j) => {
+                entrega = parseInt(entregas[j]);
+                suma += entrega;
+                return `
+                <div style="font-size:12px; margin-bottom:2px;  display:flex; justify-content:space-between;">
+                    <span><strong>${f} </strong></span> |
+                    <span style="text-align:right;">${entrega.toLocaleString()} pzs </span> |
+                    <span>${fechas[j]}</span>
+                </div>
+                `;
 
-            //html += '  <span class="bold">Factura: </span>  ' + facturas[j] + " | " + entregas[j] + " | " + fechas[j] + "<br>";
+            }).join('');
 
-            html += '<tr>';
-            html += '    <td>' + facturas[j] + '</td>';
-            html += '    <td>' + entregas[j] + '</td>';
-            html += '    <td>' + fechas[j] + '</td>';
-            html += '</tr>';
-            suma += parseInt(entregas[j]);
+            facturasHtml += `<div style="font-weight:bold; font-size:12px; display:flex; justify-content:space-between;">Total: ${suma.toLocaleString()} pzs</div>`;
 
+            return `
+                <tr style="background:${color}; color:white; vertical-align: top;">
+                    <td>${tempJson.id}</td>
+                    <td>${tempJson.codigo}</td>
+                    <td style="width: 300px; white-space: normal; word-wrap: break-word;">${tempJson.producto}</td>
+                    <td>${parseInt(tempJson.cantidad).toLocaleString()} pzs</td>
+                    <td>${tempJson.oc}</td>
+                    <td>${tempJson.fecha_oc}</td>
+                    <td>${tempJson.fecha_entrega}</td>
+                    <td><strong>${icono}${estado}</strong></td>
+                    <td>${facturasHtml}</td>
+                </tr>
+            `;
+        })
+        .join('');
 
-        }
-        
-        html += '<tr>';
-        html += '    <td></td>';
-        html += '    <td><b>Total: </b></td>';
-        html += '    <td><b>' + suma + ' pzas.</b></td>';
-        html += '</tr>';
+    let html = `
+        <table class="table table-sm text-center">
+            <thead style="background:rgba(47, 71, 92, 0.85);">
+                <tr>
+                    <th>ID</th>
+                    <th>Código</th>
+                    <th style="width: 300px;">Producto</th>
+                    <th>Cantidad</th>
+                    <th>O.C.</th>
+                    <th>Fecha Pedido</th>
+                    <th>Entrega Estimada</th>
+                    <th>Estado</th>
+                    <th>Facturas</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${filas}
+            </tbody>
+        </table>
+    `;
 
-        html += '</table></center></li>';
-        //html += '                <li class="list-group-item">  <span class="bold">Factura</span>  ' + d + '</li>';
-        html += '            </ul>';
-        html += '            <div class="card-footer">';
-        html += '<span style="color: white; font-weight:bold">' + estado + '</span>';
-        html += '            </div>';
-        html += '        </div>';
-        html += '    </div>';
-        html += '</div>';
-
-    }
-
-    paginacion(contador);
-    $('#tabla').html("");
     $('#tabla').html(html);
-    //alert(respuesta);
+    let datos = JSON.parse(arrayJson[arrayJson.length - 2]);
+    $('#currentPage').text(datos.pagina_actual);
+    $('#totalPages').text(' / ' + datos.paginas);
+
+    $('#prevPage').prop('disabled', false); //boton en true
+    $('#nextPage').prop('disabled', false); //boton en true
+
+    if (datos.pagina_actual == 1) $('#prevPage').prop('disabled', true);
+    if (datos.pagina_actual == datos.paginas) $('#nextPage').prop('disabled', true);
+}
 
 
-}
-function paginacion(contador) {
-    var paginas = contador / 20;
-    if (contador % 20 != 0) {
-        paginas = parseInt(paginas) + 1;
-    }
-    var html = "";
-    for (var i = 0; i < paginas; i++) {
-        var active = "";
-        if (pagina == (i + 1)) active = "active";
-        html += '<li class="page-item ' + active + '"><a class="page-link" onclick="cambiarPagina(' + (i + 1) + ')">' + (i + 1) + '</a></li>';
-    }
-    $('#paginacionContenido').html(html);
-    $('#paginacionContenido2').html(html);
-    let limite = max > contador ? contador : max;
-    html = min + " de " + limite + " / " + contador + " Pedidos";
-    $('#registros').html(html);
-    $('#registros2').html(html);
-}
-function cambiarPagina(page) {
-    pagina = page;
-    //para filtrar por busqueda
-    let busqueda = $('#search').val();
-    setBuscarPedidosSearch(busqueda)
-}
 function servidor(link, miFuncion) {
     if (window.navigator.onLine) {
         var xhttp = new XMLHttpRequest();

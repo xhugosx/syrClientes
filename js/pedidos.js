@@ -1,3 +1,5 @@
+var link = "https://empaquessr.com/sistema/empaquessr_2/php/";
+var pagina = 1;
 function primero() {
     //aqui ira la validacion de si ya inicio sesion
     if (localStorage.getItem('nombre') != null) {
@@ -15,78 +17,127 @@ function cerrarSesion() {
     }
 }
 
-function setBuscarPedidosSearch(busqueda) {
-    var id = localStorage.getItem("id");
-    id = llenarCeros(id);
-    //$('#tabla').empty(); 
-    //$('#tabla').append("Buscando...");
-    if (busqueda == "") setBuscarPedidos();
-    else
-        servidor('https://empaquessr.com/sistema/php/lista_pedidos/selectAll.php?cliente=' + id + '&search=' + busqueda + "&filtro=1&estado=0,1,2,3,5,6", getBuscarPedidos);
+function setBuscarPedidosGrupo() {
+    $('#currentPage').text(1);
+    pagina = 1;
+    setBuscarPedidos();
+}
+
+function cambiarPagina(paginaCambio) {
+    pagina += paginaCambio;
+    setBuscarPedidos();
 }
 
 function setBuscarPedidos() {
     var id = localStorage.getItem("id");
     id = llenarCeros(id);
-
-    //$('#tabla').empty(); 
-    //$('#tabla').append("Buscando...");
-
-    servidor('https://empaquessr.com/sistema/php/lista_pedidos/selectAll.php?cliente=' + id + "&filtro=1&estado=0,1,2,3,5,6,", getBuscarPedidos);
+    let busqueda = $('#search').val();
+    let cantidad = $('#grupos').val();
+    //console.log(link + 'lista_pedidos/cliente/selectAll.php?cliente=' + id + "&search=" + busqueda + "&filtro=1&estado=0,1,2,3,5,6,");
+    servidor(link + 'lista_pedidos/cliente/selectAll.php?cliente=' + id + "&search=" + busqueda + "&filtro=1&estado=0,1,2,3,6,&cantidad=" + cantidad + "&pagina=" + pagina, getBuscarPedidos);
 }
 function getBuscarPedidos(xhttp) {
 
     var respuesta = xhttp.responseText;
-    if (respuesta == "") {
-        $('#tabla').html("Sin Pedidos Pendientes...");
-        return 0;
-    }
-    var arrayJson = respuesta.split("|");
-    var html = "";
-    for (var i = 0; i < arrayJson.length - 1; i++) {
-        let tempJson = JSON.parse(arrayJson[i]);
-        let estado, color;
-        if (tempJson.estado == 0) {
-            color = "#9b9b9b";
-            estado = "Pendiente";
-        } else if (tempJson.estado == 1) {
-            color = "#f7bd56";
-            estado = "Proceso";
-        } else if (tempJson.estado == 2 || tempJson.estado == 3) {
-            color = "#a5d3ae";
-            estado = "Terminado";
-        } else if (tempJson.estado == 5) {
-            color = "#ad69bc";
-            estado = "Parcial";
-        } else if (tempJson.estado == 6) {
-            color = "black";
-            estado = "Cancelada";
-        }
-        var d = new Date(tempJson.fecha_oc);
-        d = addDaysToDate(d, 20);
 
-        html += '<div class="col" style="margin:5px 0 5px 0">';
-        html += '    <div class=" h-100">';
-        html += '        <div class="card text-center h-100" style="height: 100;width: 18em;background:' + color + '" onclick="mensaje(\'fecha\'+' + i + ')">';
-        html += '            <div class="card-header" style=" color:white">';
-        html += '                <span class="bold">ID: </span> ' + tempJson.id;
-        html += '                <span id="fecha' + i + '" style="float: right;" class="d-inline-block" data-toggle="popover" data-content="Fecha Pedido: ' + tempJson.fecha_oc + '" ><img src="elements/calendar2-fill.svg" width="13px" alt=""></span>';
-        html += '            </div>';
-        html += '            <ul class="list-group list-group-flush">';
-        html += '                <li class="list-group-item"><span class="bold">' + tempJson.codigo + '</span></li>';
-        html += '                <li class="list-group-item">' + tempJson.producto + '</li>';
-        html += '                <li class="list-group-item">  <span class="bold">' + tempJson.cantidad + ' pzas.</span>  </li>';
-        html += '                <li class="list-group-item" style="font-size: 10px">  <span class="bold">Entrega estimada: <br></span>  ' + d + '</li>';
-        html += '                <li class="list-group-item" style="font-size: 15px; font-weight:bold">  <span class="bold">O.C: </span>  ' + tempJson.oc + '</li>';
-        html += '            </ul>';
-        html += '            <div class="card-footer">';
-        html += '<span style="color: white; font-weight:bold">' + estado + '</span>';
-        html += '            </div>';
-        html += '        </div>';
-        html += '    </div>';
-        html += '</div>';
+    if (respuesta === "") {
+        $('#tabla').html("Sin Pedidos Pendientes...");
+        return;
     }
+
+    var arrayJson = respuesta.split("|");
+
+    // Filas de la tabla
+    let filas = arrayJson
+        .slice(0, -2) // quitamos el último vacío
+        .map((item, i) => {
+            let tempJson = JSON.parse(item);
+            let estado, color, icono;
+
+            switch (tempJson.estado) {
+                case '0':
+                    estado = " Pendiente";
+                    color = "#9b9b9be4";
+                    icono = '<i class="fa fa-hourglass-start"></i>'; // reloj de arena
+                    break;
+                case '1':
+                    estado = " Proceso";
+                    color = "#f7bc56d8";
+                    icono = '<i class="fa fa-spinner fa-spin"></i>'; // icono girando
+                    break;
+                case '2':
+                    estado = " Terminado";
+                    color = "#a5d3aedf";
+                    icono = '<i class="fa fa-check-circle"></i>'; // check
+                    break;
+                case '3':
+                    estado = " Terminado";
+                    color = "#a5d3aedf";
+                    icono = '<i class="fa fa-check-circle"></i>'; // check
+                    break;
+                case '6':
+                    estado = " Cancelada";
+                    color = "#0000009f";
+                    icono = '<i class="fa fa-times-circle"></i>'; // cruz
+                    break;
+                default:
+                    estado = " Desconocido";
+                    color = "#ffffff";
+                    icono = '<i class="fa fa-question-circle"></i>';
+            }
+
+
+            //let d = new Date(tempJson.fecha_oc);
+            //d = addDaysToDate(d, 20);
+            //console.log(estado, color, tempJson.estado)
+            return `
+          <tr class="resaltar" style="background:${color}; color :white;">
+            <td>${tempJson.id}</td>
+            <td>${tempJson.codigo}</td>
+            <td>${tempJson.producto}</td>
+            <td>${parseInt(tempJson.cantidad).toLocaleString()} pzs</td>
+            <td>${tempJson.oc}</td>
+            <td>${tempJson.fecha_oc}</td>
+            <td>${tempJson.fecha_entrega}</td>
+            <td><strong>${icono}${estado}</strong></td>
+          </tr>
+        `;
+        })
+        .join("");
+
+    // Generar tabla completa
+    let html = `
+  <table class="table table-sm text-center">
+    <thead style="background:rgba(47, 71, 92, 0.85); ">
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Código</th>
+        <th scope="col">Producto</th>
+        <th scope="col">Cantidad</th>
+        <th scope="col">O.C.</th>
+        <th scope="col">Fecha Pedido</th>
+        <th scope="col">Entrega Estimada</th>
+        <th scope="col">Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${filas}
+    </tbody>
+  </table>
+`;
+
     $('#tabla').html(html);
+
+    let datos = JSON.parse(arrayJson[arrayJson.length - 2]);
+    $('#currentPage').text(datos.pagina_actual);
+    $('#totalPages').text(' / ' + datos.paginas);
+
+    $('#prevPage').prop('disabled', false); //boton en true
+    $('#nextPage').prop('disabled', false); //boton en true
+
+    if (datos.pagina_actual == 1) $('#prevPage').prop('disabled', true);
+    if (datos.pagina_actual == datos.paginas) $('#nextPage').prop('disabled', true);
+
 
 }
 function mensaje(elemento) {

@@ -3,7 +3,7 @@ function setEntrar() {
     var contrasena = $('#contrasena').val();
     if (!vacio(rfc, contrasena)) {
         
-        servidor('https://empaquessr.com/sistema/php/usuario/select.php?rfc='+rfc+'&contrasena='+contrasena,getEntrar)
+        servidor('https://empaquessr.com/sistema/empaquessr_2/php/usuario/select.php?rfc='+rfc+'&contrasena='+contrasena,getEntrar)
         
     }
     else alert("Espacios vacios!");

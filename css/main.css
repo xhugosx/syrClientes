@@ -13,7 +13,7 @@
 
 body {
     /*background-color: #efeff4;*/
-    background: url("https://empaquessyrgdl.000webhostapp.com/imagenes/Logo_oficial.svg");
+    background: url("../elements/Logo_oficial.svg");
     background-repeat: no-repeat;
     background-position: center;
     background-attachment: fixed;
@@ -28,9 +28,11 @@ body {
     font-weight: bold;
     color: rgb(69, 69, 69);
 }
-table>thead>tr>th{
+
+table>thead>tr>th {
     color: white;
 }
+
 .pdf {
     width: 25px;
     cursor: pointer;
@@ -42,7 +44,7 @@ table>thead>tr>th{
 
 table {
     text-align: center;
-    font-size:smaller;
+    font-size: smaller;
 }
 
 th {
@@ -57,7 +59,7 @@ td {
 
 .resaltar:hover {
     cursor: pointer;
-    background-color: rgba(62, 121, 172, 0.718);
+    background-color: rgba(62, 121, 172, 0.718) !important;
     color: white;
 }
 
@@ -132,4 +134,78 @@ li {
     }
 
     /*0% {top: 100%; transform:scale(1);}*/
+}
+
+
+
+/*nuevo*/
+
+
+.group-select {
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    font-family: Arial, sans-serif;
+}
+
+.label-grupos {
+    margin-right: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+.select-wrap {
+    position: relative;
+    display: inline-block;
+}
+
+.select-wrap select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 6px 30px 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.select-wrap select:hover {
+    border-color: #007bff;
+    background-color: #eef6ff;
+}
+
+.select-arrow {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #007bff;
+}
+
+.nav-buttons {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.nav-buttons button {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    margin: 0 3px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+}
+
+.nav-buttons button:hover {
+    background-color: #0056b3;
 }

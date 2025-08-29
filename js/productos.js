@@ -1,3 +1,5 @@
+var link = "https://empaquessr.com/sistema/empaquessr_2/php/";
+var pagina = 1;
 function primero() {
     //aqui ira la validacion de si ya inicio sesion
     if (localStorage.getItem('nombre') != null) {
@@ -14,65 +16,106 @@ function cerrarSesion() {
         window.location.href = "index.html";
     }
 }
-
-function setBuscarProductosSearch(search) {
-    var id = localStorage.getItem("id");
-    id = llenarCeros(id);
-    servidor('https://empaquessr.com/sistema/php/productos/select.php?type=4&search=' + search + '&cliente=' + id, getBuscarProductos)
+function setBuscarProductosGrupo() {
+    $('#currentPage').text(1);
+    pagina = 1;
+    setBuscarProductos()
 }
 
 function setBuscarProductos() {
     var id = localStorage.getItem("id");
     id = llenarCeros(id);
-    servidor('https://empaquessr.com/sistema/php/productos/select.php?type=1&search=' + id, getBuscarProductos)
+    let busqueda = $('#search').val();
+    let cantidad = $('#grupos').val();
+    //console.log(link + 'productos/cliente/select.php?search=' + busqueda + "&cliente=" + id + "&cantidad=" + cantidad + "&pagina=" + pagina);
+    servidor(link + 'productos/cliente/select.php?search=' + busqueda + "&cliente=" + id + "&cantidad=" + cantidad + "&pagina=" + pagina,
+        getBuscarProductos);
+
 }
 function getBuscarProductos(xhttp) {
     var respuesta = xhttp.responseText;
     if (respuesta == "") {
-        $('#tabla').html("Sin Producto...");
+        $('#tabla').html("Sin Productos...");
         return 0;
     }
     var arrayJson = respuesta.split("|");
-    var html = "";
-    html += '<table class="table table-sm">';
-    html += '            <thead style="background:rgba(47, 71, 92, 0.718);">';
-    html += '                <tr>';
-    html += '                    <th scope="col">Codigo</th>';
-    html += '                    <th scope="col">Descripción</th>';
-    html += '                    <th scope="col">Precio</th>';
-    html += '                    <th scope="col" class="esconder">Plano</th>';
-    html += '                </tr>';
-    html += '            </thead>';
-    html += '            <tbody>';
+    var id = localStorage.getItem("id");
 
-    for (var i = 0; i < arrayJson.length - 1; i++) {
-        let tempJson = JSON.parse(arrayJson[i]);
-        //console.log(tempJson);
-        let cliente = tempJson.codigo.substr(0, 3);
-        let codigo = tempJson.codigo.replace("/", "-");
-        let temp = tempJson.file
-        tempJson.file = temp == 1
-            ? '<a href="https://empaquessr.com/sistema/planos/' + cliente + '/' + codigo + '.pdf" target="_blank"><img src="elements/pdf-true.svg" class="pdf"></a>'
-            : '<span id="element' + i + '" class="d-inline-block" data-toggle="popover" data-content="SIN PLANO - Solicite a su proveedor agregarlo" onclick="mensaje(\'element' + i + '\')"><img src="elements/pdf-false.svg" class="pdf" ></span>';
-        let h = temp == 1 ? 'onclick="window.open(\'https://empaquessr.com/sistema/planos/' + cliente + '/' + codigo + '.pdf\', \'_blank\')"' : 'onclick="mensaje(\'element' + i + '\')"';
-        html += '<tr ' + h + ' class="resaltar">';
-        html += '    <td scope="row">' + tempJson.codigo + '</td>';
-        html += '    <td>' + tempJson.producto + '</td>';
-        html += '    <td>$' + tempJson.precio + '</td>';
-        html += '    <td class="esconder">' + tempJson.file + '</td>';
-        html += '</tr>';
+    // Generar filas dinámicamente
+    let filas = arrayJson
+        .slice(0, -2) // quitamos los dos últimos vacíos
+        .map((item, i) => {
+            let tempJson = JSON.parse(item);
+            let cliente = tempJson.codigo.substr(0, 3);
+            let producto = tempJson.codigo.split("/")[1];
+            let tienePlano = tempJson.file == 1;
 
+            let fileHtml = tienePlano
+                ? '<img src="elements/pdf-true.svg" class="pdf">'
+                : `<span id="element${i}" class="d-inline-block" 
+             data-toggle="popover" 
+             data-content="SIN PLANO - Solicite a su proveedor agregarlo" 
+             onclick="mensaje('element${i}')">
+             <img src="elements/pdf-false.svg" class="pdf">
+         </span>`;
 
-    }
-    html += '        </tbody>';
-    html += '    </table>';
+            let evento = tienePlano
+                ? `onclick="visorphp('${cliente}','${producto}','${id}')"`
+                : `onclick="mensaje('element${i}')"`;
 
+            return `
+      <tr ${evento} class="resaltar">
+        <td scope="row">${tempJson.codigo}</td>
+        <td>${tempJson.producto}</td>
+        <td>$${tempJson.precio}</td>
+        <td class="esconder">${fileHtml}</td>
+      </tr>
+    `;
+        })
+        .join("");
+
+    // Generar tabla completa
+    let html = `
+  <table class="table table-sm">
+    <thead style="background:rgba(47, 71, 92, 0.718);">
+      <tr>
+        <th scope="col">Codigo</th>
+        <th scope="col">Descripción</th>
+        <th scope="col">Precio</th>
+        <th scope="col" class="esconder">Plano</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${filas}
+    </tbody>
+  </table>
+`;
 
     $('#tabla').html(html);
-    //alert(respuesta);
 
+    let datos = JSON.parse(arrayJson[arrayJson.length - 2]);
+    $('#currentPage').text(datos.pagina_actual);
+    $('#totalPages').text(' / ' + datos.paginas);
 
+    $('#prevPage').prop('disabled', false); //boton en true
+    $('#nextPage').prop('disabled', false); //boton en true
+
+    if (datos.pagina_actual == 1) $('#prevPage').prop('disabled', true);
+    if (datos.pagina_actual == datos.paginas) $('#nextPage').prop('disabled', true);
 }
+
+function visorphp(cliente, producto, id) {
+    let win = window.open('', '_blank', 'width=800,height=600');
+    win.document.write(`
+  <iframe src="https://empaquessr.com/sistema/empaquessr_2/php/productos/visor.php?cliente=${cliente}&producto=${producto}&id=${id}" 
+          style="width:100%;height:100%;border:none;"></iframe>
+`);
+}
+function cambiarPagina(paginaCambio) {
+    pagina += paginaCambio;
+    setBuscarProductos();
+}
+
 
 function servidor(link, miFuncion) {
     if (window.navigator.onLine) {
