@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- CSS personalizado -->
+    <link rel="stylesheet" href="css/main.css">
+
+    <link rel="shortcut icon" href="elements/Recurso-2-8.ico">
+    <script src="js/inicioSesion.js"></script>
+
+    <title>Inicio de sesión</title>
+</head>
+
+<body onload="primero()">
+
+
+    <div class="background"></div>
+
+    <main class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h2 class="inicio">Inicio de Sesión</h2>
+                <p>Accede a tu cuenta</p>
+            </div>
+
+            <div class="form-group custom-input">
+                <i class="fa-solid fa-id-card"></i>
+                <input type="text" id="rfc" placeholder="Escribe tu RFC">
+            </div>
+
+            <div class="form-group custom-input">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="contrasena" placeholder="Escribe tu contraseña">
+            </div>
+
+            <button class="btn-login" onclick="setEntrar()" type="button">
+                <span>Entrar</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

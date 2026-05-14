@@ -1,0 +1,49 @@
+.custom-filter {
+    min-width: 200px;
+
+    border-radius: 12px;
+
+    border: 1px solid #d7e3f4;
+
+    background: #f8fbff;
+
+    color: #486581;
+
+    font-weight: 500;
+}
+
+.badge-status {
+    padding: 8px 14px;
+
+    border-radius: 50px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 110px;
+}
+
+.badge-status.pendiente {
+    background: rgba(255, 193, 7, .15);
+
+    color: #c79100;
+}
+
+.badge-status.proceso {
+    background: rgba(33, 150, 243, .12);
+
+    color: #1565c0;
+}
+
+.badge-status.terminado {
+    background: rgba(76, 175, 80, .15);
+
+    color: #2e7d32;
+}

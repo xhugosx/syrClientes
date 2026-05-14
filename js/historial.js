@@ -1,201 +1,387 @@
-//funcion para generar limite de registros
-var pagina = 1;
-var link = "https://empaquessr.com/sistema/empaquessr_2/php/";
-function primero() {
-    //aqui ira la validacion de si ya inicio sesion
-    if (localStorage.getItem('nombre') != null) {
+let paginaActual = 1;
+let totalPaginas = 1;
+let limite = 10;
 
-        $('#cliente').text(localStorage.getItem('nombre'));
-        setBuscarHistorial();
-    }
-    else window.location.href = "index.html";
-}
-function cerrarSesion() {
-    var opcion = confirm("Estas seguro de cerrar sesión?");
-    if (opcion == true) {
-        localStorage.clear();
+
+historial();
+
+$('#buscador').on('keyup', function () {
+    paginaActual = 1;
+    historial();
+});
+
+$('#filtroEstado').on('change', function () {
+    paginaActual = 1;
+    historial();
+});
+
+$('#fechaInicio').on('change', function () {
+    paginaActual = 1;
+    historial();
+});
+
+$('#fechaFin').on('change', function () {
+    paginaActual = 1;
+    historial();
+});
+$('#cerrarSesion').on('click', function () {
+    borrarLocalStorage();
+    setTimeout(() => {
         window.location.href = "index.html";
-    }
-}
-function setBuscarHistorialGrupo() {
-    $('#currentPage').text(1);
-    pagina = 1;
-    setBuscarHistorial();
-}
+    }, 500);
+});
 
-function cambiarPagina(paginaCambio) {
-    pagina += paginaCambio;
-    setBuscarHistorial();
-}
-//funciones para consultar tabla
-function setBuscarHistorial() {
-    var id = localStorage.getItem("id");
-    id = llenarCeros(id);
-    let busqueda = $('#search').val();
-    let cantidad = $('#grupos').val();
-    //console.log(link + "lista_pedidos/cliente/selectAll.php?filtro=1&estado=4,5,&cliente=" + id + "&search=" + busqueda + "&cantidad=" + cantidad + "&pagina=" + pagina);
-    servidor(link + "lista_pedidos/cliente/selectAll.php?filtro=1&estado=4,5,&cliente=" + id + "&search=" + busqueda + "&cantidad=" + cantidad + "&pagina=" + pagina, getBuscarHistorial);
-}
-function getBuscarHistorial(xhttp) {
-    var respuesta = xhttp.responseText;
 
-    if (respuesta == "" || respuesta == 0) {
-        $('#tabla').html("Sin resultados...");
-        return;
-    }
+function historial(pagina = 1) {
 
-    var arrayJson = respuesta.split("|");
+    //console.log('Cargando historial, página ' + pagina);
 
-    let filas = arrayJson
-        .slice(0, -2)
-        .map((item, i) => {
-            let tempJson = JSON.parse(item);
-            let estado, color, icono;
+    paginaActual = pagina;
 
-            switch (tempJson.estado) {
-                case '4':
-                    estado = " Entregado";
-                    color = "#3066acd0";
-                    icono = '<i class="fa fa-check-circle"></i>';
-                    break;
-                case '5':
-                    estado = " Parcial";
-                    color = "#ad69bcbe";
-                    icono = '<i class="fa fa-circle-half-stroke"></i>';
-                    break;
-                default:
-                    estado = " Desconocido";
-                    color = "#ffffff";
-                    icono = '<i class="fa fa-question-circle"></i>';
+    mostrarCarga();
+
+    let codigo = tresDigitos(localStorage.getItem('cliente_id'));
+    let rfc = localStorage.getItem('rfc');
+
+    let buscador = $('#buscador').val();
+    let estado = $('#filtroEstado').val();
+
+    let fechaInicio = $('#fechaInicio').val();
+    let fechaFin = $('#fechaFin').val();
+
+    let form = new FormData();
+
+    form.append('codigo', codigo);
+    form.append('rfc', rfc);
+
+    form.append('buscador', buscador);
+    form.append('estado', estado);
+
+    form.append('fechaInicio', fechaInicio);
+    form.append('fechaFin', fechaFin);
+
+    form.append('pagina', paginaActual);
+    form.append('limite', limite);
+
+    servidor(
+        'https://empaquessr.com/sistema/cliente/historial.php',
+        form,
+        function (res) {
+
+            cerrarCarga();
+
+            let datos = JSON.parse(res.responseText);
+
+            //console.log(datos);
+
+            if (!datos.status) {
+
+                $('#contenedorPedidos').html(`
+                
+                    <div class="pedido-empty">
+                        <i class="bi bi-clock-history"></i>
+                        <h4>No hay historial</h4>
+                        <p>No se encontraron pedidos finalizados.</p>
+                    </div>
+                
+                `);
+
+                $('#paginacionPedidos').html('');
+
+                return;
+
             }
-            //console.log(tempJson);
-            let facturas = tempJson.facturas.split(',');
-            let fechas = tempJson.fecha_factura.split(',');
-            let entregas = tempJson.entregado.split(',');
-            let suma = 0;
-            let entrega = 0;
 
-            // Construir lista compacta de facturas
-            let facturasHtml = facturas.map((f, j) => {
-                entrega = parseInt(entregas[j]);
-                suma += entrega;
-                return `
-                <div style="font-size:12px; margin-bottom:2px;  display:flex; justify-content:space-between;">
-                    <span><strong>${f} </strong></span> |
-                    <span style="text-align:right;">${entrega.toLocaleString()} pzs </span> |
-                    <span>${fechas[j]}</span>
-                </div>
+            totalPaginas = datos.totalPaginas;
+
+            let html = '';
+
+            datos.data.forEach(pedido => {
+
+                let badge = '';
+                let textoEstado = '';
+
+                if (pedido.estado == 4) {
+
+                    badge = 'badge-entregado';
+                    textoEstado = 'Entregado';
+
+                }
+                else if (pedido.estado == 5) {
+
+                    badge = 'badge-parcial';
+                    textoEstado = 'Entrega parcial';
+
+                }
+                else {
+
+                    badge = 'badge-cancelado';
+                    textoEstado = 'Cancelado';
+
+                }
+
+                let facturas = '';
+
+                if (pedido.facturas && pedido.facturas != 'null') {
+
+                    let listaFacturas = pedido.facturas.split(',');
+                    let listaFechas = pedido.fechas_factura ? pedido.fechas_factura.split(',') : [];
+                    let listaCantidades = pedido.cantidades_factura ? pedido.cantidades_factura.split(',') : [];
+
+                    facturas += `
+                    
+                        <div class="factura-table">
+
+                            <div class="factura-head">
+                                <div>Factura</div>
+                                <div>Fecha</div>
+                                <div>Entrega</div>
+                            </div>
+                    
+                    `;
+                    //console.log(listaFacturas);
+                    let totalCantidad = 0;
+                    listaFacturas.forEach((factura, index) => {
+
+                        let fecha = listaFechas[index] || '-';
+                        let cantidad = listaCantidades[index] || '0';
+                        //console.log(factura, fecha, cantidad, "vuelta: " + index);
+                        facturas += `
+                        
+                            <div class="factura-row">
+                                <div class="factura-col factura-folio">
+                                    <i class="bi bi-receipt-cutoff"></i>
+                                    ${factura}
+                                </div>
+                                 <div class="factura-col">
+                                    ${fecha}
+                                </div>
+                                <div class="factura-col">
+                                    ${parseInt(cantidad).toLocaleString()} pzs
+                                </div>
+                               
+                            </div>
+                        `;
+                        totalCantidad += parseInt(cantidad);
+
+                    });
+                    facturas += `
+                    
+                        <div class="factura-row">
+                            <div class="factura-col factura-folio">
+                            </div>
+                            <div class="factura-col" style="font-weight: bold;">
+                                Total:
+                            </div>
+                            <div class="factura-col">
+                                ${totalCantidad.toLocaleString()} pzs
+                            </div>
+
+                        </div>
+                    
+                    `;
+
+                    facturas += `
+                        </div>
+                    `;
+
+                }
+                else {
+
+                    facturas = `
+                    
+                        <div class="factura-empty">
+                            Sin facturas registradas
+                        </div>
+                    
+                    `;
+
+                }
+
+
+                html += `
+                
+                    <div class="pedido-card">
+
+                        <div class="pedido-header">
+
+                            <div>
+
+                                <div class="pedido-codigo">
+                                    OC: ${pedido.oc}
+                                </div>
+
+                                <h3 class="pedido-producto">
+                                    ${pedido.producto}
+                                </h3>
+
+                            </div>
+
+                            <div class="pedido-badge ${badge}">
+                                ${textoEstado}
+                            </div>
+
+                        </div>
+
+                        <div class="pedido-body">
+
+                            <div class="pedido-info">
+                                <span>Código</span>
+                                <strong>${pedido.codigo}</strong>
+                            </div>
+
+                            <div class="pedido-info">
+                                <span>Cantidad</span>
+                                <strong>${parseInt(pedido.cantidad).toLocaleString()} piezas</strong>
+                            </div>
+
+                            <div class="pedido-info">
+                                <span>Fecha O.C.</span>
+                                <strong>${pedido.fecha_oc}</strong>
+                            </div>
+
+                            <div class="pedido-info">
+                                <span>Entrega</span>
+                                <strong>${pedido.fecha_entrega}</strong>
+                            </div>
+
+                        </div>
+
+                        <div class="factura-list">
+                            ${facturas}
+                        </div>
+
+                        <div class="pedido-footer">
+
+                            <i class="bi bi-chat-left-text"></i>
+
+                            <p>
+                                ${pedido.observaciones != '' ? pedido.observaciones : 'Sin observaciones registradas.'}
+                            </p>
+
+                        </div>
+
+                    </div>
+                
                 `;
 
-            }).join('');
+            });
 
-            facturasHtml += `<div style="font-weight:bold; font-size:12px; display:flex; justify-content:space-between;">Total: ${suma.toLocaleString()} pzs</div>`;
+            $('#contenedorHistorial').html(html);
 
-            return `
-                <tr style="background:${color}; color:white; vertical-align: top;">
-                    <td>${tempJson.id}</td>
-                    <td>${tempJson.codigo}</td>
-                    <td style="width: 300px; white-space: normal; word-wrap: break-word;">${tempJson.producto}</td>
-                    <td>${parseInt(tempJson.cantidad).toLocaleString()} pzs</td>
-                    <td>${tempJson.oc}</td>
-                    <td>${tempJson.fecha_oc}</td>
-                    <td>${tempJson.fecha_entrega}</td>
-                    <td><strong>${icono}${estado}</strong></td>
-                    <td>${facturasHtml}</td>
-                </tr>
-            `;
-        })
-        .join('');
+            renderPaginacionHistorial();
 
-    let html = `
-        <table class="table table-sm text-center">
-            <thead style="background:rgba(47, 71, 92, 0.85);">
-                <tr>
-                    <th>ID</th>
-                    <th>Código</th>
-                    <th style="width: 300px;">Producto</th>
-                    <th>Cantidad</th>
-                    <th>O.C.</th>
-                    <th>Fecha Pedido</th>
-                    <th>Entrega Estimada</th>
-                    <th>Estado</th>
-                    <th>Facturas</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${filas}
-            </tbody>
-        </table>
+        }
+    );
+
+}
+
+function cambiarPaginaHistorial(direccion) {
+
+    let nuevaPagina = paginaActual + direccion;
+
+    if (nuevaPagina < 1 || nuevaPagina > totalPaginas) return;
+
+    historial(nuevaPagina);
+
+}
+
+function renderPaginacionHistorial() {
+
+    let html = '';
+
+    html += `
+    
+        <button 
+            class="page-btn"
+            onclick="cambiarPaginaHistorial(-1)"
+            ${paginaActual == 1 ? 'disabled' : ''}
+        >
+            <i class="bi bi-chevron-left"></i>
+        </button>
+    
     `;
 
-    $('#tabla').html(html);
-    let datos = JSON.parse(arrayJson[arrayJson.length - 2]);
-    $('#currentPage').text(datos.pagina_actual);
-    $('#totalPages').text(' / ' + datos.paginas);
+    let inicio = Math.max(1, paginaActual - 1);
+    let fin = Math.min(totalPaginas, paginaActual + 1);
 
-    $('#prevPage').prop('disabled', false); //boton en true
-    $('#nextPage').prop('disabled', false); //boton en true
+    if (inicio > 1) {
 
-    if (datos.pagina_actual == 1) $('#prevPage').prop('disabled', true);
-    if (datos.pagina_actual == datos.paginas) $('#nextPage').prop('disabled', true);
-}
+        html += `
+        
+            <button 
+                class="page-btn"
+                onclick="historial(1)"
+            >
+                1
+            </button>
+        
+        `;
 
+        if (inicio > 2) {
 
-function servidor(link, miFuncion) {
-    if (window.navigator.onLine) {
-        var xhttp = new XMLHttpRequest();
+            html += `
+            
+                <span class="pagination-dots">...</span>
+            
+            `;
 
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
+        }
 
-                miFuncion(this);
-
-            }
-
-        };
-
-        xhttp.open("GET", link, true);
-        xhttp.send();
     }
-    else {
-        alert('Revisa tu conexión <i style="color:gray" class="fa-solid fa-wifi fa-lg"></i>');
+
+    for (let i = inicio; i <= fin; i++) {
+
+        html += `
+        
+            <button 
+                class="page-btn ${i == paginaActual ? 'active' : ''}"
+                onclick="historial(${i})"
+            >
+                ${i}
+            </button>
+        
+        `;
+
     }
-}
-function mensaje(elemento) {
-    $('#' + elemento).popover('show');
 
-    setTimeout(() => {
-        $('#' + elemento).popover('hide');
-    }, 2000);
-}
-function llenarCeros(id) {
-    id = String(id);
-    //alert(id.length);
-    if (id.length == 1) return '00' + id;
-    else if (id.length == 2) return "0" + id;
-    else return id;
+    if (fin < totalPaginas) {
 
-}
-function llenarCerosFecha(id) {
-    id = String(id);
-    if (id.length == 1) return "0" + id;
-    else return id;
+        if (fin < totalPaginas - 1) {
 
-}
-/*function addDaysToDate(date, days) {
-    date = new Date(date);
-    var fecha = new Date(date.getFullYear() + "-" + (date.getMonth() + 2) + "-" + (date.getDate() + 1));
-    fecha.setDate(fecha.getDate() + days);
-    return fecha.getFullYear() + "-" + llenarCerosFecha(fecha.getMonth()) + "-" + llenarCerosFecha(fecha.getDate());
-}*/
-function addDaysToDate(fecha, dias) {
-    fecha = new Date(fecha)
-    fecha.setDate(fecha.getDate() + dias + 1);
-    // Creamos array con los meses del año
-    const meses = ['ene', 'febr', 'mar', 'abr', 'may', 'jun', 'jul', 'agos', 'sep', 'oct', 'nov', 'dic'];
-    // Creamos array con los días de la semana
-    const dias_semana = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vier', 'Sáb'];
-    // Construimos el formato de salida
-    fecha = dias_semana[fecha.getDay()] + ', ' + fecha.getDate() + ' de ' + meses[fecha.getMonth()] + ' de ' + fecha.getUTCFullYear();
-    return fecha;
+            html += `
+            
+                <span class="pagination-dots">...</span>
+            
+            `;
+
+        }
+
+        html += `
+        
+            <button 
+                class="page-btn"
+                onclick="historial(${totalPaginas})"
+            >
+                ${totalPaginas}
+            </button>
+        
+        `;
+
+    }
+
+    html += `
+    
+        <button 
+            class="page-btn"
+            onclick="cambiarPaginaHistorial(1)"
+            ${paginaActual == totalPaginas ? 'disabled' : ''}
+        >
+            <i class="bi bi-chevron-right"></i>
+        </button>
+    
+    `;
+
+    $('#paginacionHistorial').html(html);
+
 }

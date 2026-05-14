@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+
+    <link rel="shortcut icon" href="elements/Recurso-2-8.ico">
+
+    <link rel="stylesheet" href="css/main.css">
+    <script src="js/historial.js"></script>
+    <title>Pedidos</title>
+</head>
+
+<body onload="primero()">
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top"
+        style="background-color: #1A9CE8 !important; width: 100%; padding: 10px 5% 10px 5%;">
+        <a class="navbar-brand" href="#" style="color: white;">
+            <div>
+                <span class="titulo">HISTORIAL PEDIDOS </span>
+            </div>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="productos.html">Productos <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Pedidos
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="pedidos.html">Estatus</a>
+                        <a class="dropdown-item" href="historial.html">Historial</a>
+                    </div>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="" onclick="cerrarSesion()"
+                        style="color: rgb(255, 255, 255); background-color: rgb(186, 73, 73); border-radius: 15px; font-weight: bold; padding: 10px 10px  10px 10px;">
+                        Cerrar Sesión
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <br><br><br>
+    <center style="margin: 0 5% 10px 5%;">
+        <div style="float: right;">
+            <span class="cliente">
+                Bienvenido:
+                <span id="cliente"></span>
+            </span><br>
+        </div>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text" id="btnGroupAddon2">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+            <input id="search" type="text" class="form-control" placeholder="Buscar: Id / Codigo / Producto / Factura"
+                aria-describedby="btnGroupAddon2" onkeyup="setBuscarHistorial()">
+            <!-- Select de grupos -->
+            <div class="group-select">
+                <label for="grupos" class="label-grupos">Grupos</label>
+                <div class="select-wrap">
+                    <select id="grupos" name="grupos" onchange="setBuscarHistorialGrupo()">
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="200">200</option>
+                        <option value="500">500</option>
+                    </select>
+                    <!-- Flecha decorativa -->
+                    <span class="select-arrow" aria-hidden="true">▾</span>
+                </div>
+            </div>
+
+            <!-- Botones de navegación -->
+            <div class="nav-buttons">
+                <button id="prevPage" onclick="cambiarPagina(-1)">&#8592;</button>
+                <span id="currentPage">1</span>
+                <span id="totalPages">/ 1</span>
+                <button id="nextPage" onclick="cambiarPagina(1)">&#8594;</button>
+            </div>
+        </div>
+        <br>
+        <!--paginacion-->
+
+
+        <div id="tabla" style="align-items: center;" class="row row-cols-1 row-cols-md-3 g-4">
+
+        </div>
+
+    </center>
+
+
+
+    <br><br><br>
+
+    <div style="padding: 15px; position: fixed; bottom: 10px; left:10px;" class="esconder">
+
+        <a class="btn btn-primary" href="#">
+            Subir
+            <i class="fas fa-arrow-up"></i>
+        </a>
+
+    </div>
+
+    <!--fin de contenido-->
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-
+    q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

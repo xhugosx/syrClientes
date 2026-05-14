@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+
+    <link rel="shortcut icon" href="elements/Recurso-2-8.ico">
+    <link rel="stylesheet" href="css/main.css">
+
+    <script src="js/productos.js"></script>
+
+    <title>Productos</title>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
+
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <img src="elements/Logo_oficial.svg" class="nav-logo">
+            <span class="ml-2 titulo">PRODUCTOS</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navContent">
+            <ul class="navbar-nav ml-auto align-items-center">
+
+                <li class="nav-item">
+                    <a class="nav-link active" href="productos.html">Productos</a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                        Pedidos
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="pedidos.html">Estatus</a>
+                        <a class="dropdown-item" href="historial.html">Historial</a>
+                    </div>
+                </li>
+
+                <li class="nav-item ml-3">
+                    <a class="btn-logout" href="#" onclick="cerrarSesion()">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO -->
+    <main class="container-main">
+
+        <!-- HEADER -->
+        <div class="top-bar esconder">
+            <span class="cliente">
+                Bienvenido: <strong id="cliente"></strong>
+            </span>
+        </div>
+
+        <!-- BUSCADOR -->
+        <div class="search-card esconder">
+
+            <div class="search-input">
+                <i class="fas fa-search" onclick="setBuscarProductos()"></i>
+                <input id="search" type="text" placeholder="Buscar: Código / Producto" onkeyup="setBuscarProductos()">
+            </div>
+
+            <div class="group-select">
+                <label>Grupos</label>
+                <select id="grupos" onchange="setBuscarProductosGrupo()">
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="200">200</option>
+                    <option value="500">500</option>
+                </select>
+            </div>
+
+            <div class="nav-buttons">
+                <button onclick="cambiarPagina(-1)"><i class="fas fa-chevron-left"></i></button>
+                <span id="currentPage">1</span>
+                <span id="totalPages">/ 1</span>
+                <button onclick="cambiarPagina(1)"><i class="fas fa-chevron-right"></i></button>
+            </div>
+
+        </div>
+
+        <!-- TABLA -->
+        <div class="table-card" id="tabla">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                Buscando...
+            </div>
+        </div>
+
+    </main>
+
+    <!-- BOTONES FLOTANTES -->
+    <div class="floating-buttons esconder">
+
+        <button class="btn-float" onclick="imprimir()">
+            <i class="fas fa-print"></i>
+        </button>
+
+        <a class="btn-float" href="#">
+            <i class="fas fa-arrow-up"></i>
+        </a>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

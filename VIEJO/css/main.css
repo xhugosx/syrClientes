@@ -1,0 +1,373 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* BODY */
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #eef6ff, #f4faff);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* FONDO CON LOGO SUAVE */
+.background {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: url("../elements/Logo_oficial.svg") center no-repeat;
+    background-size: 500px;
+    opacity: 0.04;
+    z-index: -1;
+}
+
+/* CONTENEDOR */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 20px;
+}
+
+/* CARD */
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    padding: 40px 30px;
+    border-radius: 25px;
+    background: white;
+    box-shadow: 0px 15px 40px rgba(0, 123, 255, 0.15);
+    animation: fadeIn 0.8s ease;
+    transition: 0.3s;
+}
+
+/* HOVER SUAVE */
+.login-card:hover {
+    transform: translateY(-6px);
+}
+
+/* LOGO */
+.logo-container {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.logo-container img {
+    width: 90px;
+    opacity: 0.9;
+}
+
+/* TITULO GRANDE Y RESPONSIVE */
+.inicio {
+    text-align: center;
+    font-weight: 800;
+    color: #4a6fa5;
+    margin-bottom: 25px;
+
+    /* Responsive automático */
+    font-size: clamp(22px, 4vw, 34px);
+    letter-spacing: 1px;
+}
+
+/* INPUTS */
+.custom-input {
+    position: relative;
+    margin-bottom: 18px;
+}
+
+.custom-input i {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #7aa7d9;
+}
+
+.custom-input input {
+    width: 100%;
+    padding: 12px 12px 12px 38px;
+    border-radius: 12px;
+    border: 1px solid #d6e4f5;
+    background: #f7fbff;
+    transition: 0.3s;
+}
+
+/* FOCUS */
+.custom-input input:focus {
+    outline: none;
+    border-color: #8bb8f2;
+    background: white;
+    box-shadow: 0 0 10px rgba(139, 184, 242, 0.4);
+}
+
+/* BOTÓN */
+.btn-login {
+    width: 100%;
+    padding: 13px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, #a6c8ff, #7aa7d9);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* HOVER */
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(122, 167, 217, 0.4);
+}
+
+/* CLICK */
+.btn-login:active {
+    transform: scale(0.97);
+}
+
+/* ANIMACIÓN */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 📱 RESPONSIVE FINO */
+@media (max-width: 480px) {
+    .login-card {
+        padding: 30px 20px;
+        border-radius: 20px;
+    }
+
+    .logo-container img {
+        width: 70px;
+    }
+}
+
+/* NAVBAR */
+.custom-navbar {
+    background: linear-gradient(135deg, #a6c8ff, #7aa7d9);
+    padding: 10px 5%;
+}
+
+.nav-logo {
+    width: 35px;
+}
+
+.titulo {
+    color: white;
+    font-weight: bold;
+}
+
+.nav-link {
+    color: white !important;
+}
+
+.btn-logout {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px 12px;
+    border-radius: 10px;
+    color: white;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn-logout:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* CONTENEDOR */
+.container-main {
+    margin-top: 90px;
+    padding: 20px;
+}
+
+/* TOP BAR */
+.top-bar {
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #555;
+}
+
+/* SEARCH CARD */
+.search-card {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    background: white;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+}
+
+/* INPUT */
+.search-input {
+    position: relative;
+    flex: 1;
+}
+
+.search-input i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #7aa7d9;
+}
+
+.search-input input {
+    width: 100%;
+    padding: 10px 10px 10px 35px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+/* SELECT */
+.group-select select {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+/* PAGINACIÓN */
+.nav-buttons button {
+    background: #7aa7d9;
+    border: none;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 8px;
+}
+
+/* TABLA */
+.table-card {
+    background: white;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* LOADING */
+.loading {
+    text-align: center;
+    color: #777;
+}
+
+/* BOTONES FLOTANTES */
+.floating-buttons {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.btn-float {
+    width: 45px;
+    height: 45px;
+    background: #7aa7d9;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    border: none;
+}
+
+/* TABLA MODERNA */
+.modern-table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+/* HEADER */
+.modern-table thead th {
+    background: transparent;
+    color: #4a6fa5;
+    font-weight: 600;
+    border: none;
+    font-size: 14px;
+}
+
+/* FILAS */
+.table-row {
+    background: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: 0.25s;
+    cursor: pointer;
+}
+
+/* EFECTO HOVER PRO */
+.table-row:hover {
+    transform: scale(1.01);
+    box-shadow: 0 10px 25px rgba(122, 167, 217, 0.2);
+}
+
+/* CELDAS */
+.table-row td {
+    border: none;
+    padding: 12px;
+    vertical-align: middle;
+}
+
+/* PRIMER Y ÚLTIMO BORDE REDONDEADO */
+.table-row td:first-child {
+    border-radius: 10px 0 0 10px;
+}
+
+.table-row td:last-child {
+    border-radius: 0 10px 10px 0;
+}
+
+/* TEXTO */
+.codigo {
+    font-weight: bold;
+    color: #333;
+}
+
+.producto {
+    color: #555;
+}
+
+.precio {
+    color: #4a6fa5;
+    font-weight: bold;
+}
+
+/* ICONO PDF */
+.pdf-icon {
+    width: 22px;
+    transition: 0.2s;
+}
+
+.pdf-icon:hover {
+    transform: scale(1.2);
+}
+
+/* EMPTY STATE */
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #888;
+}
+
+.empty-state i {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+/* SCROLL RESPONSIVE */
+.table-responsive {
+    overflow-x: auto;
+}

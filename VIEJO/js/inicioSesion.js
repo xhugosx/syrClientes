@@ -23,7 +23,6 @@ function getEntrar(xhttp)
         localStorage.setItem("rfc",rfc);
         localStorage.setItem("nombre", nombre);
         window.location.href = "productos.html";
-        //alert(respuesta);
     }
     else{
         alert("RFC o contraseña incorrecta!");

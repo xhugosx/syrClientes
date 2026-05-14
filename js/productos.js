@@ -1,161 +1,358 @@
-var link = "https://empaquessr.com/sistema/empaquessr_2/php/";
-var pagina = 1;
-function primero() {
-    //aqui ira la validacion de si ya inicio sesion
-    if (localStorage.getItem('nombre') != null) {
+// =========================
+// VARIABLES GLOBALES
+// =========================
 
-        $('#cliente').text(localStorage.getItem('nombre'));
-        setBuscarProductos();
-    }
-    else window.location.href = "index.html";
-}
-function cerrarSesion() {
-    var opcion = confirm("Estas seguro de cerrar sesión?");
-    if (opcion == true) {
-        localStorage.clear();
+let paginaActual = 1;
+let totalPaginas = 1;
+let limite = 10;
+
+// =========================
+// INICIO
+// =========================
+
+productos();
+
+$('#buscador').on('input', function () {
+    paginaActual = 1;
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => {
+        productos();
+    }, 500);
+});
+
+$('#cerrarSesion').on('click', function () {
+    borrarLocalStorage();
+    setTimeout(() => {
         window.location.href = "index.html";
-    }
-}
-function setBuscarProductosGrupo() {
-    $('#currentPage').text(1);
-    pagina = 1;
-    setBuscarProductos()
-}
+    }, 500);
+});
 
-function setBuscarProductos() {
-    var id = localStorage.getItem("id");
-    id = llenarCeros(id);
-    let busqueda = $('#search').val();
-    let cantidad = $('#grupos').val();
-    //console.log(link + 'productos/cliente/select.php?search=' + busqueda + "&cliente=" + id + "&cantidad=" + cantidad + "&pagina=" + pagina);
-    servidor(link + 'productos/cliente/select.php?search=' + busqueda + "&cliente=" + id + "&cantidad=" + cantidad + "&pagina=" + pagina,
-        getBuscarProductos);
+$('#descargarProductos').on('click', function () {
+    descargarProductos();
+});
 
-}
-function getBuscarProductos(xhttp) {
-    var respuesta = xhttp.responseText;
-    if (respuesta == "") {
-        $('#tabla').html("Sin Productos...");
-        return 0;
-    }
-    var arrayJson = respuesta.split("|");
-    var id = localStorage.getItem("id");
+// =========================
+// OBTENER PRODUCTOS
+// =========================
 
-    // Generar filas dinámicamente
-    let filas = arrayJson
-        .slice(0, -2) // quitamos los dos últimos vacíos
-        .map((item, i) => {
-            let tempJson = JSON.parse(item);
-            let cliente = tempJson.codigo.substr(0, 3);
-            let producto = tempJson.codigo.split("/")[1];
-            let tienePlano = tempJson.file == 1;
+function productos(pagina = 1) {
 
-            let fileHtml = tienePlano
-                ? '<img src="elements/pdf-true.svg" class="pdf">'
-                : `<span id="element${i}" class="d-inline-block" 
-             data-toggle="popover" 
-             data-content="SIN PLANO - Solicite a su proveedor agregarlo" 
-             onclick="mensaje('element${i}')">
-             <img src="elements/pdf-false.svg" class="pdf">
-         </span>`;
+    mostrarCarga();
 
-            let evento = tienePlano
-                ? `onclick="visorphp('${cliente}','${producto}','${id}')"`
-                : `onclick="mensaje('element${i}')"`;
+    let codigo = tresDigitos(localStorage.getItem('cliente_id'));
+    let rfc = localStorage.getItem('rfc');
 
-            return `
-      <tr ${evento} class="resaltar">
-        <td scope="row">${tempJson.codigo}</td>
-        <td>${tempJson.producto}</td>
-        <td>$${tempJson.precio}</td>
-        <td class="esconder">${fileHtml}</td>
-      </tr>
-    `;
-        })
-        .join("");
+    let form = new FormData();
 
-    // Generar tabla completa
-    let html = `
-  <table class="table table-sm">
-    <thead style="background:rgba(47, 71, 92, 0.718);">
-      <tr>
-        <th scope="col">Codigo</th>
-        <th scope="col">Descripción</th>
-        <th scope="col">Precio</th>
-        <th scope="col" class="esconder">Plano</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${filas}
-    </tbody>
-  </table>
-`;
+    form.append('codigo', codigo);
+    form.append('rfc', rfc);
+    form.append('pagina', pagina);
+    form.append('limite', limite);
+    if ($('#buscador').val().trim() != '') form.append('buscador', $('#buscador').val().trim());
+    //console.log(codigo, rfc, pagina, limite, $('#buscador').val().trim());
+    servidor(
+        'https://empaquessr.com/sistema/cliente/productos.php',
+        form,
+        function (res) {
 
-    $('#tabla').html(html);
+            cerrarCarga();
+            let datos = JSON.parse(res.responseText);
+            if (!datos.status) {
 
-    let datos = JSON.parse(arrayJson[arrayJson.length - 2]);
-    $('#currentPage').text(datos.pagina_actual);
-    $('#totalPages').text(' / ' + datos.paginas);
-
-    $('#prevPage').prop('disabled', false); //boton en true
-    $('#nextPage').prop('disabled', false); //boton en true
-
-    if (datos.pagina_actual == 1) $('#prevPage').prop('disabled', true);
-    if (datos.pagina_actual == datos.paginas) $('#nextPage').prop('disabled', true);
-}
-
-function visorphp(cliente, producto, id) {
-    let win = window.open('', '_blank', 'width=800,height=600');
-    win.document.write(`
-  <iframe src="https://empaquessr.com/sistema/empaquessr_2/php/productos/visor.php?cliente=${cliente}&producto=${producto}&id=${id}" 
-          style="width:100%;height:100%;border:none;"></iframe>
-`);
-}
-function cambiarPagina(paginaCambio) {
-    pagina += paginaCambio;
-    setBuscarProductos();
-}
-
-
-function servidor(link, miFuncion) {
-    if (window.navigator.onLine) {
-        var xhttp = new XMLHttpRequest();
-
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-
-                miFuncion(this);
-
+                alerta(
+                    'error',
+                    'Error',
+                    'No se pudieron obtener los productos.'
+                );
+                return;
             }
 
-        };
+            paginaActual = datos.pagina;
+            totalPaginas = datos.totalPaginas;
 
-        xhttp.open("GET", link, true);
-        xhttp.send();
+            let html = '';
+
+            if (datos.data.length > 0) {
+                datos.data.forEach(producto => {
+                    html += `
+                        <tr>
+                            <td>${producto.codigo}</td>
+                            <td>${producto.producto}</td>
+                            <td>$${parseFloat(producto.precio).toFixed(2)}</td>
+                            <td class="text-center">
+                                <button 
+                                    class="btn btn-plano"
+                                    onclick="verPlano('${codigo}', '${producto.codigo}')"
+                                >
+                                    <i class="bi bi-file-earmark-pdf"></i>
+                                    Ver plano
+
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            else {
+
+                html = `
+                    <tr>
+                        <td colspan="4" class="text-center py-5">
+                            <div class="empty-products">
+                                <i class="bi bi-box-seam"></i>
+                                <h5>No hay productos</h5>
+                                <p>No se encontraron productos registrados.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+            $('#tablaProductos').html(html);
+            renderPaginacion();
+        }
+    );
+
+}
+function descargarProductos() {
+
+    mostrarCarga();
+
+    let codigo = tresDigitos(localStorage.getItem('cliente_id'));
+    let rfc = localStorage.getItem('rfc');
+    let buscador = $('#buscador').val();
+
+    let form = new FormData();
+
+    form.append('codigo', codigo);
+    form.append('rfc', rfc);
+    form.append('pagina', 1);
+    form.append('limite', 999999);
+    form.append('buscador', buscador);
+
+    servidor(
+        'https://empaquessr.com/sistema/cliente/productos.php',
+        form,
+        function (res) {
+
+            cerrarCarga();
+
+            let datos = JSON.parse(res.responseText);
+
+            if (!datos.status) {
+
+                alerta(
+                    'error',
+                    'Error',
+                    'No se pudieron descargar los productos.'
+                );
+
+                return;
+
+            }
+            let cliente = localStorage.getItem('cliente_nombre');
+            generarExcel(datos.data, cliente);
+
+        }
+    );
+
+}
+function generarExcel(productos, cliente) {
+
+    let tabla = `
+    
+        <table border="1">
+        
+            <tr>
+                <th>Código</th>
+                <th>Producto</th>
+                <th>Precio</th>
+            </tr>
+    
+    `;
+
+    productos.forEach(producto => {
+
+        tabla += `
+        
+            <tr>
+                <td>${producto.codigo}</td>
+                <td>${producto.producto}</td>
+                <td>$${parseFloat(producto.precio).toFixed(2)}</td>
+            </tr>
+        
+        `;
+
+    });
+
+    tabla += '</table>';
+
+    let archivo = new Blob(
+        ['\ufeff', tabla],
+        {
+            type: 'application/vnd.ms-excel'
+        }
+    );
+
+    let url = URL.createObjectURL(archivo);
+
+    let link = document.createElement('a');
+
+    link.href = url;
+    let fecha = new Date().toISOString().split('T')[0];
+    if (cliente.length > 20) {
+        cliente = cliente.substring(0, 20) + '...';
     }
-    else {
-        alert('Revisa tu conexión <i style="color:gray" class="fa-solid fa-wifi fa-lg"></i>');
+    link.download = `productos_${cliente}_${fecha}.xls`;
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+
+}
+
+// =========================
+// PAGINACION
+// =========================
+
+function renderPaginacion() {
+
+    let html = '';
+
+    html += `
+    
+        <button 
+            class="pagination-btn"
+            onclick="cambiarPagina(-1)"
+        >
+            <i class="bi bi-chevron-left"></i>
+        </button>
+    
+    `;
+
+    let inicio = Math.max(1, paginaActual - 1);
+    let fin = Math.min(totalPaginas, paginaActual + 1);
+
+    // =========================
+    // PRIMERA PAGINA
+    // =========================
+
+    if (inicio > 1) {
+
+        html += `
+        
+            <button 
+                class="pagination-btn"
+                onclick="productos(1)"
+            >
+                1
+            </button>
+        
+        `;
+
+        if (inicio > 2) {
+
+            html += `
+            
+                <span class="pagination-dots">...</span>
+            
+            `;
+
+        }
+
     }
-}
-function llenarCeros(id) {
-    id = String(id);
-    //alert(id.length);
-    if (id.length == 1) return '00' + id;
-    else if (id.length == 2) return "0" + id;
-    else return id;
+
+    // =========================
+    // PAGINAS CENTRALES
+    // =========================
+
+    for (let i = inicio; i <= fin; i++) {
+
+        html += `
+        
+            <button 
+                class="pagination-btn ${i == paginaActual ? 'active' : ''}"
+                onclick="productos(${i})"
+            >
+                ${i}
+            </button>
+        
+        `;
+
+    }
+
+    // =========================
+    // ULTIMA PAGINA
+    // =========================
+
+    if (fin < totalPaginas) {
+
+        if (fin < totalPaginas - 1) {
+
+            html += `
+            
+                <span class="pagination-dots">...</span>
+            
+            `;
+
+        }
+
+        html += `
+        
+            <button 
+                class="pagination-btn"
+                onclick="productos(${totalPaginas})"
+            >
+                ${totalPaginas}
+            </button>
+        
+        `;
+
+    }
+
+    // =========================
+    // BOTON SIGUIENTE
+    // =========================
+
+    html += `
+    
+        <button 
+            class="pagination-btn"
+            onclick="cambiarPagina(1)"
+        >
+            <i class="bi bi-chevron-right"></i>
+        </button>
+    
+    `;
+
+    $('.pagination-container').html(html);
 
 }
-function mensaje(elemento) {
-    $('#' + elemento).popover('show');
 
-    setTimeout(() => {
-        $('#' + elemento).popover('hide');
-    }, 2000);
+// =========================
+// CAMBIAR PAGINA
+// =========================
+
+function cambiarPagina(direccion) {
+
+    let nuevaPagina = paginaActual + direccion;
+    if (nuevaPagina < 1 || nuevaPagina > totalPaginas) {
+        return;
+    }
+    productos(nuevaPagina);
+
 }
 
-function imprimir() {
-    $(".esconder").addClass("escondeExtra");
-    window.print();
-    $(".esconder").removeClass("escondeExtra");
+// =========================
+// VER PDF
+// =========================
 
+function verPlano(cliente, producto) {
+    producto = producto.substring(producto.indexOf('/') + 1);
+    let win = window.open('', '_blank', 'width=800,height=600');
+    win.document.write(`
+        <iframe src="https://empaquessr.com/sistema/cliente/visor.php?cliente=${cliente}&producto=${producto}" 
+                style="width:100%;height:100%;border:none;"></iframe>
+    `);
 }
