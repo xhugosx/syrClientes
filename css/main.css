@@ -213,7 +213,6 @@ body::before {
 ========================= */
 
 @keyframes alertaEntrada {
-
     from {
         opacity: 0;
         transform: translateY(-15px);
@@ -223,7 +222,6 @@ body::before {
         opacity: 1;
         transform: translateY(0);
     }
-
 }
 
 .loader-overlay {
@@ -302,15 +300,12 @@ body::before {
 }
 
 @keyframes spin {
-
     to {
         transform: rotate(360deg);
     }
-
 }
 
 @keyframes loaderEntrada {
-
     from {
         opacity: 0;
         transform: scale(.95);
@@ -320,7 +315,6 @@ body::before {
         opacity: 1;
         transform: scale(1);
     }
-
 }
 
 /* =========================
@@ -379,8 +373,6 @@ body::before {
 ========================= */
 
 .custom-table tbody td {
-    padding: 18px;
-
     border-color: #edf2f7;
 
     color: #486581;
@@ -423,22 +415,6 @@ body::before {
 
 .table-responsive::-webkit-scrollbar-thumb:hover {
     background: rgba(30, 136, 229, 0.55);
-}
-
-/* =========================
-   MOBILE
-========================= */
-
-@media (max-width: 768px) {
-
-    .table-responsive {
-        max-height: calc(100vh - 280px);
-    }
-
-    .custom-table {
-        min-width: 650px;
-    }
-
 }
 
 /* =========================
@@ -510,7 +486,6 @@ body::before {
     font-weight: 600;
 }
 
-
 /* =========================
    SIDEBAR
 ========================= */
@@ -575,8 +550,6 @@ body::before {
     color: white;
     box-shadow: 0 8px 18px rgba(30, 136, 229, 0.3);
 }
-
-
 
 /* =========================
    CONTENIDO
@@ -655,32 +628,6 @@ body::before {
 }
 
 /* =========================
-   TABLA
-========================= */
-
-.custom-table {
-    margin: 0;
-}
-
-.custom-table thead th {
-    border: none;
-    background: #f1f7ff;
-    color: #1e3a8a;
-    font-weight: 600;
-    padding: 18px;
-}
-
-.custom-table tbody td {
-    border-color: #edf2f7;
-    padding: 18px;
-    color: #486581;
-}
-
-.custom-table tbody tr:hover {
-    background: rgba(66, 165, 245, 0.04);
-}
-
-/* =========================
    BOTON PLANO
 ========================= */
 
@@ -729,8 +676,9 @@ body::before {
     color: white;
 }
 
-
-/* estyle de estatus*/
+/* =========================
+   ESTATUS
+========================= */
 
 .estatus-wrapper {
     height: calc(100vh - 140px);
@@ -788,7 +736,7 @@ body::before {
 }
 
 .estatus-select {
-    height: 50px;
+    height: 30px;
     border: none;
     outline: none;
     border-radius: 16px;
@@ -797,13 +745,12 @@ body::before {
     box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
     font-size: 14px;
     color: #355070;
-    min-width: 180px;
+    width: 100%;
 }
 
 .estatus-grid {
     flex: 1;
     overflow: auto;
-    padding-right: 5px;
     padding: 10px;
     border-radius: 25px;
 }
@@ -1042,27 +989,10 @@ body::before {
     font-size: 13px;
 }
 
-@media(max-width:768px) {
+/* =========================
+   HISTORIAL / FACTURAS
+========================= */
 
-    .estatus-wrapper {
-        height: auto;
-    }
-
-    .pedido-body {
-        grid-template-columns: 1fr;
-    }
-
-    .pedido-header {
-        flex-direction: column;
-    }
-
-    .pedido-badge {
-        width: 100%;
-    }
-
-}
-
-/* style historial */
 .date-group {
     display: flex;
     align-items: center;
@@ -1083,11 +1013,6 @@ body::before {
     padding-left: 4px;
     text-transform: uppercase;
     letter-spacing: .5px;
-}
-
-.date-input label {
-    color: #2d86c2;
-    margin-right: 4px;
 }
 
 .pedido-facturas {
@@ -1123,7 +1048,6 @@ body::before {
     gap: 8px;
     margin-bottom: 10px;
 }
-
 
 .factura-table {
     width: 100%;
@@ -1187,116 +1111,112 @@ body::before {
     margin-top: 8px;
 }
 
-/*
-.factura-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 12px;
-    border-radius: 12px;
-    background: rgba(255,255,255,.9);
-    border: 1px solid rgba(30,136,229,.12);
-    box-shadow: 0 4px 10px rgba(0,0,0,.04);
-    font-size: 12px;
-    font-weight: 600;
-    color: #355070;
-    transition: .2s ease;
-}
 
-.factura-tag:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 18px rgba(0,0,0,.08);
-}
+/* ===================================================
+   BLOQUE RESPONSIVO TOTAL (MÓVILES Y PANTALLAS CHICAS)
+====================================================== */
 
-.factura-tag i {
-    color: #1e88e5;
-    font-size: 13px;
-}
+@media (max-width: 768px) {
 
-.factura-tag.empty {
-    background: rgba(158,158,158,.10);
-    color: #7b8794;
-    border: 1px dashed rgba(120,120,120,.25);
-}
+    /* --- Ajustes generales de tipografía y espaciados --- */
+    .content-section {
+        padding: 15px;
+        /* Cambiado de 0 para que no quede pegado al borde físico */
+    }
 
-.factura-tag {
-    background: rgba(255,255,255,.88);
-    border: 1px solid rgba(30,136,229,.10);
-    border-radius: 14px;
-    padding: 10px 12px;
-    min-width: 180px;
-    box-shadow: 0 4px 10px rgba(0,0,0,.04);
-}
+    .content-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
 
-.factura-top {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
+    .content-header h2 {
+        font-size: 22px;
+    }
 
-.factura-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 10px;
-    background: rgba(30,136,229,.10);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #1e88e5;
-    font-size: 13px;
-}
+    .content-card {
+        padding: 15px;
+        border-radius: 18px;
+    }
 
-.factura-data {
-    flex: 1;
-    min-width: 0;
-}
+    /* --- Elementos interactivos encogidos --- */
+    .custom-input {
+        padding: 8px;
+        font-size: 14px;
+    }
 
-.factura-label {
-    display: block;
-    font-size: 10px;
-    color: #8a97a8;
-    text-transform: uppercase;
-    letter-spacing: .5px;
-    margin-bottom: 1px;
-}
+    .btn-login {
+        padding: 10px;
+        font-size: 14px;
+    }
 
-.factura-numero {
-    font-size: 10px;
-    font-weight: 700;
-    color: #355070;
-    line-height: 1.2;
-    word-break: break-word;
-}
+    /* --- Buscadores y Cabeceras de Tablas --- */
+    .table-top,
+    .estatus-top {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
 
-.factura-divider {
-    width: 100%;
-    height: 1px;
-    background: rgba(30,136,229,.08);
-    margin: 8px 0;
-}
+    .search-box {
+        width: 100%;
+        /* El buscador toma todo el ancho */
+    }
 
-.factura-bottom {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-}
+    /* --- Tablas --- */
+    .table-responsive {
+        max-height: calc(100vh - 280px);
+    }
 
-.factura-info {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-}
+    .custom-table {
+        min-width: 650px;
+    }
 
-.factura-info-label {
-    font-size: 9px;
-    text-transform: uppercase;
-    color: #90a0b2;
-    letter-spacing: .5px;
-}
+    /* --- Alertas y Loaders adaptados --- */
+    .custom-alert {
+        top: 15px;
+        right: 15px;
+        left: 15px;
+        width: auto;
+        /* Se ensancha de forma fluida */
+        min-height: auto;
+        padding: 12px 15px;
+        gap: 12px;
+    }
 
-.factura-info strong {
-    font-size: 9px;
-    color: #355070;
-    font-weight: 600;
-    line-height: 1.2;
-}*/
+    .alert-icon {
+        min-width: 42px;
+        height: 42px;
+        font-size: 18px;
+    }
+
+    .loader-box {
+        width: 90%;
+        max-width: 320px;
+        padding: 25px 20px;
+    }
+
+    /* --- Estatus de Pedidos --- */
+    .estatus-wrapper {
+        height: auto;
+    }
+
+    .pedido-body {
+        grid-template-columns: 1fr;
+        /* Tarjetas de pedidos en una sola columna */
+    }
+
+    .pedido-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .pedido-badge {
+        width: 100%;
+        text-align: center;
+    }
+
+
+}

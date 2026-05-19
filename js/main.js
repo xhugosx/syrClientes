@@ -93,3 +93,4 @@ function borrarLocalStorage() {
 function tresDigitos(num) {
     return String(num).padStart(3, '0');
 }
+
